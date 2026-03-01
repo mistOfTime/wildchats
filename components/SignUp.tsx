@@ -146,7 +146,9 @@ export default function SignUp({ onSuccess, onSwitchToLogin }: SignUpProps) {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Create a password"
-                className="w-full px-4 py-3 pr-12 bg-white border-2 border-amber-800 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-gray-900 placeholder-gray-400 transition"
+                autoComplete="new-password"
+                className="w-full px-4 py-3 pr-12 bg-white border-2 border-amber-800 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-gray-900 placeholder-gray-400 transition [&::-ms-reveal]:hidden [&::-ms-clear]:hidden"
+                style={{ WebkitTextSecurity: showPassword ? 'none' : undefined } as React.CSSProperties}
               />
               {password && (
                 <button
@@ -181,7 +183,9 @@ export default function SignUp({ onSuccess, onSwitchToLogin }: SignUpProps) {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 placeholder="Confirm your password"
-                className="w-full px-4 py-3 pr-12 bg-white border-2 border-amber-800 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-gray-900 placeholder-gray-400 transition"
+                autoComplete="new-password"
+                className="w-full px-4 py-3 pr-12 bg-white border-2 border-amber-800 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-gray-900 placeholder-gray-400 transition [&::-ms-reveal]:hidden [&::-ms-clear]:hidden"
+                style={{ WebkitTextSecurity: showConfirmPassword ? 'none' : undefined } as React.CSSProperties}
               />
               {confirmPassword && (
                 <button
