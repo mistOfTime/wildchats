@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 
 export function useTypingIndicator(userId: string, chatWithId: string | null) {
-  const timeoutRef = useRef<number>();
+  const timeoutRef = useRef<number | undefined>(undefined);
 
   const setTyping = async (isTyping: boolean) => {
     if (!chatWithId) return;
