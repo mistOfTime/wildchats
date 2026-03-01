@@ -1,65 +1,198 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { authService } from '@/lib/auth';
+import LoginForm from '@/components/LoginForm';
+import SignUp from '@/components/SignUp';
+import ForgotPassword from '@/components/ForgotPassword';
+import ChatLayout from '@/components/ChatLayout';
+
+type AuthView = 'login' | 'signup' | 'forgot-password';
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [authView, setAuthView] = useState<AuthView>('login');
+
+  useEffect(() => {
+    // Load and apply saved theme on mount - default to light mode (no dark class)
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
+    
+    // If no saved theme, default to light mode (maroon/gold)
+    if (!savedTheme || savedTheme === 'light') {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.classList.add('dark');
+    }
+
+    // Handle email confirmation callback
+    const handleAuthCallback = async () => {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      
+      if (accessToken) {
+        // Clear the hash from URL
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    };
+
+    handleAuthCallback();
+    
+    checkUser();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event);
+      
+      if (event === 'SIGNED_IN' && session) {
+        await loadUserProfile(session.user.id);
+      } else if (event === 'SIGNED_OUT') {
+        setCurrentUser(null);
+      } else if (event === 'TOKEN_REFRESHED') {
+        if (session?.user) {
+          await loadUserProfile(session.user.id);
+        }
+      } else if (event === 'USER_UPDATED') {
+        if (session?.user) {
+          await loadUserProfile(session.user.id);
+        }
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const checkUser = async () => {
+    try {
+      const session = await authService.getSession();
+      if (session?.user) {
+        await loadUserProfile(session.user.id);
+      } else {
+        // No valid session, clear any bad data
+        setCurrentUser(null);
+      }
+    } catch (error: any) {
+      console.error('Error checking user:', error);
+      
+      // If we get an auth error (like invalid refresh token), clear everything
+      if (error?.message?.includes('refresh') || error?.message?.includes('token')) {
+        console.log('Clearing invalid session data...');
+        localStorage.clear();
+        sessionStorage.clear();
+        setCurrentUser(null);
+      }
+    } finally {
+      // Loading removed
+    }
+  };
+
+  const loadUserProfile = async (userId: string) => {
+    try {
+      console.log('Loading user profile for:', userId);
+      
+      // Add timeout to prevent infinite loading
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Profile load timeout')), 5000)
+      );
+      
+      const loadPromise = supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      const { data, error } = await Promise.race([loadPromise, timeoutPromise]) as any;
+      
+      if (error) {
+        console.error('Error loading profile:', error);
+        
+        // If user doesn't exist, create profile
+        if (error.code === 'PGRST116') {
+          console.log('User profile not found, creating...');
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { data: newProfile, error: createError } = await supabase
+              .from('users')
+              .insert([{
+                id: user.id,
+                username: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                email: user.email!,
+                online: true,
+              }])
+              .select()
+              .single();
+            
+            if (createError) {
+              console.error('Failed to create profile:', createError);
+            } else if (newProfile) {
+              console.log('Profile created:', newProfile);
+              setCurrentUser(newProfile);
+              return;
+            }
+          }
+        }
+        throw error;
+      }
+      
+      if (data) {
+        console.log('User profile loaded:', data);
+        setCurrentUser(data);
+      }
+    } catch (error) {
+      console.error('Failed to load user profile:', error);
+    }
+  };
+
+  const handleLoginSuccess = async () => {
+    console.log('Login success callback triggered');
+    await checkUser();
+  };
+
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+      setCurrentUser(null);
+      setAuthView('login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
+  if (!currentUser) {
+    if (authView === 'signup') {
+      return (
+        <SignUp
+          onSuccess={handleLoginSuccess}
+          onSwitchToLogin={() => setAuthView('login')}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+      );
+    }
+
+    if (authView === 'forgot-password') {
+      return (
+        <ForgotPassword
+          onBack={() => setAuthView('login')}
+        />
+      );
+    }
+
+    return (
+      <LoginForm
+        onSuccess={handleLoginSuccess}
+        onSwitchToSignUp={() => setAuthView('signup')}
+        onForgotPassword={() => setAuthView('forgot-password')}
+      />
+    );
+  }
+
+  const refreshCurrentUser = async () => {
+    if (currentUser?.id) {
+      await loadUserProfile(currentUser.id);
+    }
+  };
+
+  return <ChatLayout currentUser={currentUser} onLogout={handleLogout} onRefreshUser={refreshCurrentUser} />;
 }

@@ -1,0 +1,523 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { supabase, type User, type Message, type TypingIndicator } from '@/lib/supabase';
+import { useTypingIndicator } from '@/lib/hooks/useTypingIndicator';
+import EmojiPicker from './EmojiPicker';
+
+interface ChatWindowProps {
+  currentUser: User;
+  selectedUser: User | null;
+  onViewProfile: (userId: string) => void;
+  onBack?: () => void;
+}
+
+export default function ChatWindow({ currentUser, selectedUser, onViewProfile, onBack }: ChatWindowProps) {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { handleTyping } = useTypingIndicator(currentUser.id, selectedUser?.id || null);
+
+  useEffect(() => {
+    if (selectedUser) {
+      loadMessages();
+      markMessagesAsRead();
+      
+      // Subscribe to new messages
+      const messagesChannel = supabase
+        .channel(`messages:${selectedUser.id}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `sender_id=eq.${selectedUser.id},receiver_id=eq.${currentUser.id}`
+          },
+          (payload) => {
+            setMessages((prev) => [...prev, payload.new as Message]);
+            markMessagesAsRead();
+          }
+        )
+        .subscribe();
+
+      // Subscribe to typing indicators
+      const typingChannel = supabase
+        .channel(`typing:${selectedUser.id}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'typing_indicators',
+            filter: `user_id=eq.${selectedUser.id},chat_with_id=eq.${currentUser.id}`
+          },
+          (payload) => {
+            const indicator = payload.new as TypingIndicator;
+            setIsTyping(indicator.is_typing);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(messagesChannel);
+        supabase.removeChannel(typingChannel);
+      };
+    }
+  }, [selectedUser, currentUser.id]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const loadMessages = async () => {
+    if (!selectedUser) return;
+
+    const { data } = await supabase
+      .from('messages')
+      .select('*, sender:users!sender_id(*)')
+      .or(
+        `and(sender_id.eq.${currentUser.id},receiver_id.eq.${selectedUser.id}),and(sender_id.eq.${selectedUser.id},receiver_id.eq.${currentUser.id})`
+      )
+      .order('created_at', { ascending: true });
+
+    if (data) setMessages(data);
+  };
+
+  const markMessagesAsRead = async () => {
+    if (!selectedUser) return;
+
+    await supabase
+      .from('messages')
+      .update({ read: true })
+      .eq('sender_id', selectedUser.id)
+      .eq('receiver_id', currentUser.id)
+      .eq('read', false);
+  };
+
+  const sendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMessage.trim() || !selectedUser || loading) return;
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('messages')
+        .insert([
+          {
+            sender_id: currentUser.id,
+            receiver_id: selectedUser.id,
+            text: newMessage.trim(),
+            read: false
+          }
+        ])
+        .select('*, sender:users!sender_id(*)')
+        .single();
+
+      if (error) throw error;
+      
+      setMessages((prev) => [...prev, data]);
+      setNewMessage('');
+    } catch (error) {
+      console.error('Error sending message:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewMessage(e.target.value);
+    handleTyping();
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedUser) return;
+
+    // Validate file
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size must be less than 10MB');
+      return;
+    }
+
+    setUploadingImage(true);
+
+    try {
+      // Upload to Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${currentUser.id}-${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('chat-images')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw new Error(uploadError.message || 'Failed to upload image to storage');
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('chat-images')
+        .getPublicUrl(filePath);
+
+      // Send message with image
+      const { data, error } = await supabase
+        .from('messages')
+        .insert([
+          {
+            sender_id: currentUser.id,
+            receiver_id: selectedUser.id,
+            text: '📷 Image',
+            image_url: publicUrl,
+            read: false
+          }
+        ])
+        .select('*, sender:users!sender_id(*)')
+        .single();
+
+      if (error) {
+        console.error('Message insert error:', error);
+        throw new Error(error.message || 'Failed to send image message');
+      }
+      
+      setMessages((prev) => [...prev, data]);
+    } catch (error: any) {
+      console.error('Error uploading image:', error);
+      alert(error.message || 'Failed to upload image. Please check if the storage bucket is configured.');
+    } finally {
+      setUploadingImage(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleEmojiSelect = (emoji: string) => {
+    setNewMessage((prev) => prev + emoji);
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const formatTime = (timestamp: string) => {
+    return new Date(timestamp).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const formatDate = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return 'Yesterday';
+    } else {
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+  };
+
+  const groupMessagesByDate = () => {
+    const groups: { [key: string]: Message[] } = {};
+    messages.forEach(msg => {
+      const date = formatDate(msg.created_at);
+      if (!groups[date]) groups[date] = [];
+      groups[date].push(msg);
+    });
+    return groups;
+  };
+
+  if (!selectedUser) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-amber-50 via-red-50 to-yellow-50 dark:from-gray-900 dark:via-red-950 dark:to-gray-900 p-4">
+        <div className="text-center max-w-sm">
+          <div className="inline-block p-6 bg-gradient-to-br from-red-800 to-yellow-600 rounded-full mb-4 shadow-2xl">
+            <svg className="w-12 h-12 md:w-16 md:h-16 text-yellow-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+          </div>
+          <p className="text-lg md:text-xl font-semibold text-red-900 dark:text-yellow-400">Select a user to start chatting</p>
+          <p className="text-sm text-red-700 dark:text-yellow-600 mt-2">Choose someone from the list to begin your conversation</p>
+        </div>
+      </div>
+    );
+  }
+
+  const messageGroups = groupMessagesByDate();
+
+  return (
+    <div className="flex-1 flex flex-col">
+      {/* Chat Header */}
+      <div className="p-3 md:p-4 border-b border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg">
+        <div className="flex items-center gap-2 md:gap-3">
+          {/* Back button for mobile */}
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="md:hidden p-2 hover:bg-amber-100 dark:hover:bg-red-950 rounded-full transition"
+            >
+              <svg className="w-5 h-5 text-red-900 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          )}
+          
+          <div 
+            className="relative cursor-pointer hover:opacity-80 transition"
+            onClick={() => onViewProfile(selectedUser.id)}
+          >
+            {selectedUser.avatar_url ? (
+              <img
+                src={selectedUser.avatar_url}
+                alt={selectedUser.username}
+                className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover "
+              />
+            ) : (
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-red-800 to-yellow-600 flex items-center justify-center text-white font-semibold ">
+                {selectedUser.username.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <span
+              className={`absolute bottom-0 right-0 w-2.5 h-2.5 md:w-3 md:h-3 rounded-full border-2 border-white dark:border-gray-900 ${
+                selectedUser.online ? 'bg-green-500' : 'bg-gray-400'
+              }`}
+            />
+          </div>
+          <div 
+            className="flex-1 cursor-pointer hover:opacity-80 transition min-w-0"
+            onClick={() => onViewProfile(selectedUser.id)}
+          >
+            <h3 className="font-semibold text-red-900 dark:text-yellow-400 truncate text-sm md:text-base">
+              {selectedUser.username}
+            </h3>
+            <p className="text-xs md:text-sm text-red-700 dark:text-yellow-600">
+              {selectedUser.online ? 'Online' : 'Offline'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-4 bg-gradient-to-br from-amber-50 via-red-50 to-yellow-50 dark:from-gray-900 dark:via-red-950 dark:to-gray-900 scrollbar-hide">
+        {Object.entries(messageGroups).map(([date, msgs]) => (
+          <div key={date}>
+            <div className="flex justify-center my-4">
+              <span className="px-3 md:px-4 py-1 md:py-1.5 text-xs font-semibold text-red-800 dark:text-yellow-400 bg-gradient-to-r from-amber-100 to-red-100 dark:from-red-950 dark:to-yellow-950/50 rounded-full shadow-md border border-amber-300 dark:border-red-800">
+                {date}
+              </span>
+            </div>
+            {msgs.map((message) => {
+              const isOwn = message.sender_id === currentUser.id;
+              return (
+                <div
+                  key={message.id}
+                  className={`flex gap-2 md:gap-3 mb-3 md:mb-4 ${isOwn ? 'flex-row-reverse' : ''}`}
+                >
+                  <div className="flex-shrink-0">
+                    {isOwn ? (
+                      currentUser.avatar_url ? (
+                        <img
+                          src={currentUser.avatar_url}
+                          alt={currentUser.username}
+                          className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover "
+                        />
+                      ) : (
+                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-red-800 to-yellow-600 flex items-center justify-center text-white text-sm md:text-base font-semibold ">
+                          {currentUser.username.charAt(0).toUpperCase()}
+                        </div>
+                      )
+                    ) : (
+                      selectedUser.avatar_url ? (
+                        <img
+                          src={selectedUser.avatar_url}
+                          alt={selectedUser.username}
+                          className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover "
+                        />
+                      ) : (
+                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-red-800 to-yellow-600 flex items-center justify-center text-white text-sm md:text-base font-semibold ">
+                          {selectedUser.username.charAt(0).toUpperCase()}
+                        </div>
+                      )
+                    )}
+                  </div>
+                  <div className={`max-w-[75%] md:max-w-[60%] ${isOwn ? 'items-end' : 'items-start'} flex flex-col`}>
+                    <div
+                      className={`px-3 md:px-4 py-2 rounded-2xl shadow-md text-sm md:text-base ${
+                        isOwn
+                          ? 'bg-gradient-to-r from-red-800 to-yellow-600 text-white'
+                          : 'bg-gradient-to-r from-red-900 to-amber-800 text-white border-2 border-yellow-600'
+                      }`}
+                    >
+                      {message.image_url ? (
+                        <div className="space-y-2">
+                          <img
+                            src={message.image_url}
+                            alt="Shared image"
+                            className="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-90 transition"
+                            onClick={() => window.open(message.image_url, '_blank')}
+                          />
+                          {message.text !== '📷 Image' && (
+                            <p className="break-words">{message.text}</p>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="break-words">{message.text}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 mt-1">
+                      <span className="text-xs text-red-700 dark:text-yellow-600 font-medium">
+                        {formatTime(message.created_at)}
+                      </span>
+                      {isOwn && (
+                        <span className="text-xs text-yellow-600 dark:text-yellow-400">
+                          {message.read ? '✓✓' : '✓'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+        
+        {isTyping && (
+          <div className="flex gap-3 items-center">
+            {selectedUser.avatar_url ? (
+              <img
+                src={selectedUser.avatar_url}
+                alt={selectedUser.username}
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-yellow-500"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold ring-2 ring-yellow-500">
+                {selectedUser.username.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <div className="px-4 py-3 bg-white dark:bg-gray-800 rounded-2xl shadow-sm">
+              <div className="flex gap-1">
+                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {isTyping && (
+          <div className="flex gap-3 items-center">
+            {selectedUser.avatar_url ? (
+              <img
+                src={selectedUser.avatar_url}
+                alt={selectedUser.username}
+                className="w-10 h-10 rounded-full object-cover "
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-800 to-yellow-600 flex items-center justify-center text-white font-semibold ">
+                {selectedUser.username.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <div className="px-4 py-3 bg-white dark:bg-gray-800 rounded-2xl shadow-md border-2 border-amber-200 dark:border-red-900">
+              <div className="flex gap-1">
+                <span className="w-2 h-2 bg-yellow-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                <span className="w-2 h-2 bg-red-700 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                <span className="w-2 h-2 bg-yellow-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+              </div>
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Message Input */}
+      <form onSubmit={sendMessage} className="p-3 md:p-4 border-t border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg">
+        <div className="flex items-center gap-2">
+          {/* Image upload button */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploadingImage}
+            className="p-2 md:p-3 bg-gradient-to-br from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full transition disabled:opacity-50 shadow-md flex-shrink-0"
+            title="Send image"
+          >
+            {uploadingImage ? (
+              <div className="animate-spin rounded-full h-4 w-4 md:h-5 md:w-5 border-b-2 border-yellow-200"></div>
+            ) : (
+              <svg className="w-4 h-4 md:w-5 md:h-5 text-yellow-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            )}
+          </button>
+
+          {/* Emoji picker button */}
+          <div className="relative flex-shrink-0">
+            <button
+              type="button"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              className="p-2 md:p-3 bg-gradient-to-br from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full transition shadow-md"
+              title="Add emoji"
+            >
+              <svg className="w-4 h-4 md:w-5 md:h-5 text-yellow-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+            {showEmojiPicker && (
+              <EmojiPicker
+                onSelect={handleEmojiSelect}
+                onClose={() => setShowEmojiPicker(false)}
+              />
+            )}
+          </div>
+
+          {/* Message input */}
+          <input
+            type="text"
+            value={newMessage}
+            onChange={handleInputChange}
+            placeholder="Type a message..."
+            disabled={loading}
+            className="flex-1 px-3 py-2 md:px-4 md:py-3 text-sm md:text-base border-2 border-amber-300 dark:border-red-800 rounded-full focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600"
+          />
+
+          {/* Send button */}
+          <button
+            type="submit"
+            disabled={loading || (!newMessage.trim() && !uploadingImage)}
+            className="px-4 py-2 md:px-6 md:py-3 bg-gradient-to-r from-red-800 to-yellow-600 text-white rounded-full font-semibold hover:from-red-900 hover:to-yellow-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex-shrink-0"
+          >
+            <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
