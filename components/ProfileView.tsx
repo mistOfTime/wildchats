@@ -135,6 +135,14 @@ export default function ProfileView({ userId, onClose, onStartChat, isOwnProfile
               className="w-full h-full object-cover"
             />
           )}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 dark:bg-gray-300/50 dark:hover:bg-gray-400/50 rounded-full backdrop-blur-sm transition"
+          >
+            <svg className="w-5 h-5 text-white dark:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
         {/* Profile content */}
@@ -189,7 +197,7 @@ export default function ProfileView({ userId, onClose, onStartChat, isOwnProfile
             {isOwnProfile ? (
               <button
                 onClick={onEditProfile}
-                className="flex-1 px-4 py-2.5 md:py-3 text-sm md:text-base bg-gradient-to-r from-red-800 to-yellow-600 text-white rounded-xl font-semibold hover:from-red-900 hover:to-yellow-700 transition shadow-lg"
+                className="w-full px-4 py-2.5 md:py-3 text-sm md:text-base bg-gradient-to-r from-red-800 to-yellow-600 text-white rounded-xl font-semibold hover:from-red-900 hover:to-yellow-700 transition shadow-lg"
               >
                 Edit Profile
               </button>
@@ -199,17 +207,11 @@ export default function ProfileView({ userId, onClose, onStartChat, isOwnProfile
                   onStartChat(userId);
                   onClose();
                 }}
-                className="flex-1 px-4 py-2.5 md:py-3 text-sm md:text-base bg-gradient-to-r from-red-800 to-yellow-600 text-white rounded-xl font-semibold hover:from-red-900 hover:to-yellow-700 transition shadow-lg"
+                className="w-full px-4 py-2.5 md:py-3 text-sm md:text-base bg-gradient-to-r from-red-800 to-yellow-600 text-white rounded-xl font-semibold hover:from-red-900 hover:to-yellow-700 transition shadow-lg"
               >
                 Send Message
               </button>
             )}
-            <button
-              onClick={onClose}
-              className="px-4 py-2.5 md:py-3 text-sm md:text-base bg-gray-200 dark:bg-amber-950/50 text-gray-700 dark:text-amber-200 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-amber-900/50 transition border-2 dark:border-amber-800"
-            >
-              Close
-            </button>
           </div>
         </div>
       </div>
