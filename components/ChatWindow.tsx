@@ -307,10 +307,10 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
             className="flex-1 cursor-pointer hover:opacity-80 transition min-w-0"
             onClick={() => onViewProfile(selectedUser.id)}
           >
-            <h3 className="font-semibold text-red-900 dark:text-yellow-400 truncate text-sm md:text-base">
+            <h3 className="font-semibold text-black dark:text-white truncate text-sm md:text-base">
               {selectedUser.username}
             </h3>
-            <p className="text-xs md:text-sm text-red-700 dark:text-yellow-600">
+            <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300">
               {selectedUser.online ? 'Online' : 'Offline'}
             </p>
           </div>
