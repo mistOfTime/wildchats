@@ -122,7 +122,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
 
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('messages')
         .insert([
           {
@@ -131,13 +131,11 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
             text: newMessage.trim(),
             read: false
           }
-        ])
-        .select('*, sender:users!sender_id(*)')
-        .single();
+        ]);
 
       if (error) throw error;
       
-      setMessages((prev) => [...prev, data]);
+      // Don't manually add to messages - let real-time subscription handle it
       setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
@@ -192,7 +190,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
         .getPublicUrl(filePath);
 
       // Send message with image
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('messages')
         .insert([
           {
@@ -202,16 +200,14 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
             image_url: publicUrl,
             read: false
           }
-        ])
-        .select('*, sender:users!sender_id(*)')
-        .single();
+        ]);
 
       if (error) {
         console.error('Message insert error:', error);
         throw new Error(error.message || 'Failed to send image message');
       }
       
-      setMessages((prev) => [...prev, data]);
+      // Don't manually add to messages - let real-time subscription handle it
     } catch (error: any) {
       console.error('Error uploading image:', error);
       alert(error.message || 'Failed to upload image. Please check if the storage bucket is configured.');
