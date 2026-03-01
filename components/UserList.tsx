@@ -65,7 +65,7 @@ export default function UserList({
               <h3 className="font-semibold text-gray-900 dark:text-white text-sm md:text-base truncate">
                 {currentUser.username}
               </h3>
-              <p className="text-xs text-gray-700 dark:text-white/80">
+              <p className="text-xs text-gray-700 dark:text-white/90">
                 View profile
               </p>
             </div>
@@ -143,7 +143,7 @@ export default function UserList({
                   <div className="font-semibold text-gray-900 dark:text-white truncate text-sm md:text-base">
                     {user.username}
                   </div>
-                  <div className="text-xs md:text-sm text-gray-700 dark:text-white/80 truncate">
+                  <div className="text-xs md:text-sm text-gray-700 dark:text-white/90 truncate">
                     {user.online ? 'Online' : getLastSeen(user.last_seen)}
                   </div>
                 </div>
