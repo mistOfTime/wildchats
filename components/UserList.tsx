@@ -62,10 +62,10 @@ export default function UserList({
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <h3 className="font-semibold text-gray-900 dark:text-white text-sm md:text-base truncate">
+              <h3 className="font-semibold text-black dark:text-white text-sm md:text-base truncate">
                 {currentUser.username}
               </h3>
-              <p className="text-xs text-gray-700 dark:text-white/90">
+              <p className="text-xs text-gray-600 dark:text-gray-300">
                 View profile
               </p>
             </div>
@@ -140,10 +140,10 @@ export default function UserList({
                   className="flex-1 min-w-0"
                   onClick={() => onSelectUser(user)}
                 >
-                  <div className="font-semibold text-gray-900 dark:text-white truncate text-sm md:text-base">
+                  <div className="font-semibold text-black dark:text-white truncate text-sm md:text-base">
                     {user.username}
                   </div>
-                  <div className="text-xs md:text-sm text-gray-700 dark:text-white/90 truncate">
+                  <div className="text-xs md:text-sm text-gray-600 dark:text-gray-300 truncate">
                     {user.online ? 'Online' : getLastSeen(user.last_seen)}
                   </div>
                 </div>
