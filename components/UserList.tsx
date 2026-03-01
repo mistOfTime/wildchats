@@ -93,7 +93,7 @@ export default function UserList({
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search users..."
-          className="w-full px-3 py-2 text-sm border-2 border-amber-300 dark:border-red-800 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-red-400 dark:placeholder-yellow-600"
+          className="w-full px-3 py-2 text-sm border-2 border-amber-300 dark:border-red-800 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-300"
         />
       </div>
 
