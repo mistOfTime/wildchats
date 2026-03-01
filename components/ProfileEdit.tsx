@@ -254,8 +254,8 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
           )}
           
           {/* Cover upload button */}
-          <label className="absolute bottom-4 right-4 w-10 h-10 bg-gradient-to-r from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition transform hover:scale-110">
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <label className="absolute bottom-4 right-4 w-8 h-8 bg-gradient-to-r from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition transform hover:scale-110">
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             <input
@@ -273,16 +273,6 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
             </div>
           )}
-
-          {/* Close button */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 dark:bg-gray-300/50 dark:hover:bg-gray-400/50 rounded-full backdrop-blur-sm transition"
-          >
-            <svg className="w-5 h-5 text-white dark:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
         </div>
 
         {/* Content */}
@@ -304,8 +294,8 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
             )}
             
             {/* Upload button overlay */}
-            <label className="absolute bottom-0 right-0 w-10 h-10 bg-gradient-to-r from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition transform hover:scale-110">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <label className="absolute bottom-0 right-0 w-8 h-8 bg-gradient-to-r from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition transform hover:scale-110">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               <input
