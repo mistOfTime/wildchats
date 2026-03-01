@@ -96,8 +96,22 @@ export default function ForgotPassword({ onBack }: ForgotPasswordProps) {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-600 px-4">
-        <div className="bg-gradient-to-br from-red-900/80 via-amber-900/80 to-red-950/80 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm md:max-w-md border-2 border-amber-700/50 text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-600 px-4 relative overflow-hidden">
+        {/* Floating logos background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-12 h-12 md:w-16 md:h-16 rounded-full opacity-10 animate-float" style={{ top: '10%', left: '10%', animationDelay: '0s' }} />
+          <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-16 h-16 md:w-20 md:h-20 rounded-full opacity-10 animate-float" style={{ top: '20%', right: '15%', animationDelay: '1s' }} />
+          <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-10 h-10 md:w-14 md:h-14 rounded-full opacity-10 animate-float" style={{ bottom: '15%', left: '20%', animationDelay: '2s' }} />
+          <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-14 h-14 md:w-18 md:h-18 rounded-full opacity-10 animate-float" style={{ bottom: '25%', right: '10%', animationDelay: '0.5s' }} />
+          <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-12 h-12 md:w-16 md:h-16 rounded-full opacity-10 animate-float" style={{ top: '50%', left: '5%', animationDelay: '1.5s' }} />
+          <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-10 h-10 md:w-14 md:h-14 rounded-full opacity-10 animate-float" style={{ top: '60%', right: '8%', animationDelay: '2.5s' }} />
+          <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-8 h-8 md:w-12 md:h-12 rounded-full opacity-10 animate-float" style={{ top: '35%', left: '25%', animationDelay: '0.8s' }} />
+          <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-14 h-14 md:w-18 md:h-18 rounded-full opacity-10 animate-float" style={{ top: '70%', left: '15%', animationDelay: '1.8s' }} />
+          <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-12 h-12 md:w-16 md:h-16 rounded-full opacity-10 animate-float" style={{ top: '15%', right: '30%', animationDelay: '1.2s' }} />
+          <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-10 h-10 md:w-14 md:h-14 rounded-full opacity-10 animate-float" style={{ bottom: '10%', right: '25%', animationDelay: '2.2s' }} />
+        </div>
+
+        <div className="bg-gradient-to-br from-red-900/80 via-amber-900/80 to-red-950/80 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm md:max-w-md border-2 border-amber-700/50 text-center relative z-10">
           <div className="inline-block p-3 bg-green-900/30 rounded-full mb-4 ring-4 ring-green-700">
             <svg className="w-12 h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -115,8 +129,30 @@ export default function ForgotPassword({ onBack }: ForgotPasswordProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-600 px-4">
-      <div className="bg-gradient-to-br from-red-900/80 via-amber-900/80 to-red-950/80 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm md:max-w-md border-2 border-amber-700/50">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-600 px-4 relative overflow-hidden">
+      {/* Floating logos background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-12 h-12 md:w-16 md:h-16 rounded-full opacity-10 animate-float" style={{ top: '10%', left: '10%', animationDelay: '0s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-16 h-16 md:w-20 md:h-20 rounded-full opacity-10 animate-float" style={{ top: '20%', right: '15%', animationDelay: '1s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-10 h-10 md:w-14 md:h-14 rounded-full opacity-10 animate-float" style={{ bottom: '15%', left: '20%', animationDelay: '2s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-14 h-14 md:w-18 md:h-18 rounded-full opacity-10 animate-float" style={{ bottom: '25%', right: '10%', animationDelay: '0.5s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-12 h-12 md:w-16 md:h-16 rounded-full opacity-10 animate-float" style={{ top: '50%', left: '5%', animationDelay: '1.5s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-10 h-10 md:w-14 md:h-14 rounded-full opacity-10 animate-float" style={{ top: '60%', right: '8%', animationDelay: '2.5s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-8 h-8 md:w-12 md:h-12 rounded-full opacity-10 animate-float" style={{ top: '35%', left: '25%', animationDelay: '0.8s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-14 h-14 md:w-18 md:h-18 rounded-full opacity-10 animate-float" style={{ top: '70%', left: '15%', animationDelay: '1.8s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-12 h-12 md:w-16 md:h-16 rounded-full opacity-10 animate-float" style={{ top: '15%', right: '30%', animationDelay: '1.2s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-10 h-10 md:w-14 md:h-14 rounded-full opacity-10 animate-float" style={{ bottom: '10%', right: '25%', animationDelay: '2.2s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-16 h-16 md:w-20 md:h-20 rounded-full opacity-10 animate-float" style={{ top: '45%', right: '20%', animationDelay: '0.3s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-8 h-8 md:w-12 md:h-12 rounded-full opacity-10 animate-float" style={{ bottom: '40%', left: '12%', animationDelay: '2.8s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-11 h-11 md:w-15 md:h-15 rounded-full opacity-10 animate-float" style={{ top: '5%', left: '40%', animationDelay: '0.6s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-13 h-13 md:w-17 md:h-17 rounded-full opacity-10 animate-float" style={{ top: '80%', right: '5%', animationDelay: '1.4s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-9 h-9 md:w-13 md:h-13 rounded-full opacity-10 animate-float" style={{ top: '30%', right: '5%', animationDelay: '2.1s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-12 h-12 md:w-16 md:h-16 rounded-full opacity-10 animate-float" style={{ bottom: '5%', left: '35%', animationDelay: '0.9s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-10 h-10 md:w-14 md:h-14 rounded-full opacity-10 animate-float" style={{ top: '55%', left: '35%', animationDelay: '1.7s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-14 h-14 md:w-18 md:h-18 rounded-full opacity-10 animate-float" style={{ bottom: '50%', right: '35%', animationDelay: '2.4s' }} />
+      </div>
+
+      <div className="bg-gradient-to-br from-red-900/80 via-amber-900/80 to-red-950/80 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm md:max-w-md border-2 border-amber-700/50 relative z-10">
         <div className="text-center mb-8">
           <div className="inline-block p-3 bg-amber-800 rounded-full mb-4 shadow-lg ring-4 ring-yellow-600">
             <img 
