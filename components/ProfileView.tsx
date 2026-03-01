@@ -127,7 +127,7 @@ export default function ProfileView({ userId, onClose, onStartChat, isOwnProfile
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-gradient-to-br dark:from-red-900 dark:via-amber-900 dark:to-red-950 rounded-2xl shadow-2xl max-w-sm md:max-w-md w-full overflow-hidden">
         {/* Header with close button */}
-        <div className="relative h-24 md:h-32 bg-gradient-to-br from-red-800 to-yellow-600 dark:bg-gray-100 overflow-hidden">
+        <div className="relative h-28 md:h-32 bg-gradient-to-br from-red-800 to-yellow-600 dark:bg-gray-100 overflow-hidden">
           {profile.cover_url && (
             <img
               src={profile.cover_url}
