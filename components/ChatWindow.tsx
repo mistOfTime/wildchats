@@ -28,38 +28,54 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       loadMessages();
       markMessagesAsRead();
       
-      // Subscribe to new messages
+      // Subscribe to new messages - listen to all messages and filter client-side
       const messagesChannel = supabase
-        .channel(`messages:${selectedUser.id}`)
+        .channel(`messages:${currentUser.id}:${selectedUser.id}`)
         .on(
           'postgres_changes',
           {
             event: 'INSERT',
             schema: 'public',
-            table: 'messages',
-            filter: `sender_id=eq.${selectedUser.id},receiver_id=eq.${currentUser.id}`
+            table: 'messages'
           },
           (payload) => {
-            setMessages((prev) => [...prev, payload.new as Message]);
-            markMessagesAsRead();
+            const newMessage = payload.new as Message;
+            // Only add message if it's between current user and selected user
+            if (
+              (newMessage.sender_id === selectedUser.id && newMessage.receiver_id === currentUser.id) ||
+              (newMessage.sender_id === currentUser.id && newMessage.receiver_id === selectedUser.id)
+            ) {
+              setMessages((prev) => {
+                // Prevent duplicates
+                if (prev.some(m => m.id === newMessage.id)) {
+                  return prev;
+                }
+                return [...prev, newMessage];
+              });
+              if (newMessage.sender_id === selectedUser.id) {
+                markMessagesAsRead();
+              }
+            }
           }
         )
         .subscribe();
 
       // Subscribe to typing indicators
       const typingChannel = supabase
-        .channel(`typing:${selectedUser.id}`)
+        .channel(`typing:${currentUser.id}:${selectedUser.id}`)
         .on(
           'postgres_changes',
           {
             event: '*',
             schema: 'public',
-            table: 'typing_indicators',
-            filter: `user_id=eq.${selectedUser.id},chat_with_id=eq.${currentUser.id}`
+            table: 'typing_indicators'
           },
           (payload) => {
             const indicator = payload.new as TypingIndicator;
-            setIsTyping(indicator.is_typing);
+            // Only update if it's from the selected user typing to current user
+            if (indicator.user_id === selectedUser.id && indicator.chat_with_id === currentUser.id) {
+              setIsTyping(indicator.is_typing);
+            }
           }
         )
         .subscribe();
