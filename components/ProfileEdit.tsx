@@ -254,8 +254,8 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
           )}
           
           {/* Cover upload button */}
-          <label className="absolute bottom-4 right-4 w-8 h-8 bg-gradient-to-r from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition transform hover:scale-110">
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <label className="absolute bottom-4 right-4 w-6 h-6 bg-gradient-to-r from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition transform hover:scale-110">
+            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             <input
@@ -294,8 +294,8 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
             )}
             
             {/* Upload button overlay */}
-            <label className="absolute bottom-0 right-0 w-8 h-8 bg-gradient-to-r from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition transform hover:scale-110">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <label className="absolute bottom-0 right-0 w-6 h-6 bg-gradient-to-r from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition transform hover:scale-110">
+              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               <input
