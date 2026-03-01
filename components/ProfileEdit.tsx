@@ -241,10 +241,10 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div className="bg-white dark:bg-gradient-to-br dark:from-red-900 dark:via-amber-900 dark:to-red-950 rounded-2xl shadow-2xl max-w-sm md:max-w-md w-full overflow-hidden">
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4">
+        <div className="bg-white dark:bg-gradient-to-br dark:from-red-900 dark:via-amber-900 dark:to-red-950 rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden max-h-[95vh] overflow-y-auto">
         {/* Header with cover photo */}
-        <div className="relative h-24 md:h-32 bg-gradient-to-br from-red-800 to-yellow-600 dark:bg-gray-100 overflow-hidden">
+        <div className="relative h-20 md:h-32 bg-gradient-to-br from-red-800 to-yellow-600 dark:bg-gray-100 overflow-hidden">
           {coverPreviewUrl && (
             <img
               src={coverPreviewUrl}
@@ -254,7 +254,7 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
           )}
           
           {/* Cover upload button */}
-          <label className="absolute bottom-4 right-4 w-6 h-6 bg-gradient-to-r from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition transform hover:scale-110">
+          <label className="absolute bottom-2 right-2 md:bottom-4 md:right-4 w-6 h-6 bg-gradient-to-r from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full flex items-center justify-center cursor-pointer shadow-lg transition transform hover:scale-110">
             <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
@@ -276,18 +276,18 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
         </div>
 
         {/* Content */}
-        <div className="px-6 md:px-8 pb-6 md:pb-8">
+        <div className="px-4 md:px-8 pb-4 md:pb-8">
           {/* Avatar preview with upload button */}
-          <div className="relative -mt-12 md:-mt-16 mb-6 w-24 h-24 md:w-32 md:h-32 mx-auto">
+          <div className="relative -mt-10 md:-mt-16 mb-4 md:mb-6 w-20 h-20 md:w-32 md:h-32 mx-auto">
             {previewUrl ? (
               <img
                 src={previewUrl}
                 alt={profile.username}
-                className="w-24 h-24 md:w-32 md:h-32 rounded-full  object-cover "
+                className="w-20 h-20 md:w-32 md:h-32 rounded-full  object-cover "
               />
             ) : (
-              <div className="w-24 h-24 md:w-32 md:h-32 rounded-full  bg-gradient-to-br from-red-800 to-yellow-600 flex items-center justify-center ">
-                <span className="text-3xl md:text-4xl font-bold text-white">
+              <div className="w-20 h-20 md:w-32 md:h-32 rounded-full  bg-gradient-to-br from-red-800 to-yellow-600 flex items-center justify-center ">
+                <span className="text-2xl md:text-4xl font-bold text-white">
                   {getInitials(profile.username || 'U')}
                 </span>
               </div>
@@ -315,35 +315,35 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
             )}
           </div>
 
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">
+          <h2 className="text-lg md:text-2xl font-bold text-gray-900 dark:text-white mb-3 md:mb-6">
             Edit Profile
           </h2>
 
           {/* Form */}
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-amber-200 mb-2">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-amber-200 mb-1 md:mb-2">
                 Username
               </label>
               <input
                 type="text"
                 value={profile.username}
                 onChange={(e) => setProfile({ ...profile, username: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-amber-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-yellow-500 focus:border-transparent bg-white dark:bg-amber-950/50 dark:text-white transition"
+                className="w-full px-3 py-2 md:px-4 md:py-3 text-sm md:text-base border border-gray-300 dark:border-amber-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-yellow-500 focus:border-transparent bg-white dark:bg-amber-950/50 dark:text-white transition"
                 placeholder="Your name"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-amber-200 mb-2">
+              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-amber-200 mb-1 md:mb-2">
                 Bio
               </label>
               <textarea
                 value={profile.bio}
                 onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-                rows={4}
+                rows={3}
                 maxLength={200}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-amber-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-yellow-500 focus:border-transparent bg-white dark:bg-amber-950/50 dark:text-white transition resize-none"
+                className="w-full px-3 py-2 md:px-4 md:py-3 text-sm md:text-base border border-gray-300 dark:border-amber-800 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-yellow-500 focus:border-transparent bg-white dark:bg-amber-950/50 dark:text-white transition resize-none"
                 placeholder="Tell us about yourself..."
               />
               <p className="text-xs text-gray-500 dark:text-amber-300 mt-1">
@@ -390,18 +390,18 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
             )}
 
             {/* Action buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+            <div className="flex flex-col gap-2 md:gap-3 pt-3 md:pt-4">
               <button
                 onClick={handleSave}
                 disabled={saving || uploading || uploadingCover || !profile.username}
-                className="flex-1 px-4 py-2.5 md:py-3 text-sm md:text-base bg-gradient-to-r from-red-800 to-yellow-600 text-white rounded-xl font-semibold hover:from-red-900 hover:to-yellow-700 transition disabled:opacity-50 shadow-lg"
+                className="w-full px-4 py-2 md:py-3 text-sm md:text-base bg-gradient-to-r from-red-800 to-yellow-600 text-white rounded-xl font-semibold hover:from-red-900 hover:to-yellow-700 transition disabled:opacity-50 shadow-lg"
               >
                 {saving ? 'Saving...' : 'Save Changes'}
               </button>
               <button
                 onClick={onClose}
                 disabled={saving || uploading || uploadingCover}
-                className="px-4 py-2.5 md:py-3 text-sm md:text-base bg-gray-200 dark:bg-amber-950/50 text-gray-700 dark:text-amber-200 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-amber-900/50 transition disabled:opacity-50 border-2 dark:border-amber-800"
+                className="w-full px-4 py-2 md:py-3 text-sm md:text-base bg-gray-200 dark:bg-amber-950/50 text-gray-700 dark:text-amber-200 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-amber-900/50 transition disabled:opacity-50 border-2 dark:border-amber-800"
               >
                 Cancel
               </button>
