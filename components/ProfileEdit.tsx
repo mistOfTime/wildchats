@@ -242,9 +242,9 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
   return (
     <>
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4">
-        <div className="bg-white dark:bg-gradient-to-br dark:from-red-900 dark:via-amber-900 dark:to-red-950 rounded-xl md:rounded-2xl shadow-2xl max-w-[360px] md:max-w-sm w-full overflow-hidden max-h-[90vh] overflow-y-auto">
+        <div className="bg-white dark:bg-gradient-to-br dark:from-red-900 dark:via-amber-900 dark:to-red-950 rounded-xl md:rounded-2xl shadow-2xl max-w-[380px] md:max-w-sm w-full overflow-hidden max-h-[92vh] overflow-y-auto">
         {/* Header with cover photo */}
-        <div className="relative h-24 md:h-32 bg-gradient-to-br from-red-800 to-yellow-600 dark:bg-gray-100 overflow-hidden">
+        <div className="relative h-28 md:h-32 bg-gradient-to-br from-red-800 to-yellow-600 dark:bg-gray-100 overflow-hidden">
           {coverPreviewUrl && (
             <img
               src={coverPreviewUrl}
@@ -276,17 +276,17 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
         </div>
 
         {/* Content */}
-        <div className="px-3 md:px-8 pb-3 md:pb-8">
+        <div className="px-4 md:px-8 pb-4 md:pb-8">
           {/* Avatar preview with upload button */}
-          <div className="relative -mt-10 md:-mt-16 mb-3 md:mb-6 w-20 h-20 md:w-32 md:h-32 mx-auto">
+          <div className="relative -mt-12 md:-mt-16 mb-4 md:mb-6 w-24 h-24 md:w-32 md:h-32 mx-auto">
             {previewUrl ? (
               <img
                 src={previewUrl}
                 alt={profile.username}
-                className="w-20 h-20 md:w-32 md:h-32 rounded-full  object-cover "
+                className="w-24 h-24 md:w-32 md:h-32 rounded-full  object-cover "
               />
             ) : (
-              <div className="w-20 h-20 md:w-32 md:h-32 rounded-full  bg-gradient-to-br from-red-800 to-yellow-600 flex items-center justify-center ">
+              <div className="w-24 h-24 md:w-32 md:h-32 rounded-full  bg-gradient-to-br from-red-800 to-yellow-600 flex items-center justify-center ">
                 <span className="text-2xl md:text-4xl font-bold text-white">
                   {getInitials(profile.username || 'U')}
                 </span>
@@ -315,27 +315,27 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
             )}
           </div>
 
-          <h2 className="text-lg md:text-2xl font-bold text-gray-900 dark:text-white mb-2 md:mb-6">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 md:mb-6">
             Edit Profile
           </h2>
 
           {/* Form */}
-          <div className="space-y-2.5 md:space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <div>
-              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-amber-200 mb-1">
+              <label className="block text-sm md:text-sm font-medium text-gray-700 dark:text-amber-200 mb-1.5 md:mb-2">
                 Username
               </label>
               <input
                 type="text"
                 value={profile.username}
                 onChange={(e) => setProfile({ ...profile, username: e.target.value })}
-                className="w-full px-3 py-2 md:px-4 md:py-3 text-sm md:text-base border border-gray-300 dark:border-amber-800 rounded-lg md:rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-yellow-500 focus:border-transparent bg-white dark:bg-amber-950/50 dark:text-white transition"
+                className="w-full px-3.5 py-2.5 md:px-4 md:py-3 text-sm md:text-base border border-gray-300 dark:border-amber-800 rounded-lg md:rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-yellow-500 focus:border-transparent bg-white dark:bg-amber-950/50 dark:text-white transition"
                 placeholder="Your name"
               />
             </div>
 
             <div>
-              <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-amber-200 mb-1">
+              <label className="block text-sm md:text-sm font-medium text-gray-700 dark:text-amber-200 mb-1.5 md:mb-2">
                 Bio
               </label>
               <textarea
@@ -343,7 +343,7 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
                 onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
                 rows={2}
                 maxLength={200}
-                className="w-full px-3 py-2 md:px-4 md:py-3 text-sm md:text-base border border-gray-300 dark:border-amber-800 rounded-lg md:rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-yellow-500 focus:border-transparent bg-white dark:bg-amber-950/50 dark:text-white transition resize-none"
+                className="w-full px-3.5 py-2.5 md:px-4 md:py-3 text-sm md:text-base border border-gray-300 dark:border-amber-800 rounded-lg md:rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-yellow-500 focus:border-transparent bg-white dark:bg-amber-950/50 dark:text-white transition resize-none"
                 placeholder="Tell us about yourself..."
               />
               <p className="text-xs md:text-xs text-gray-500 dark:text-amber-300 mt-1">
@@ -352,15 +352,15 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
             </div>
 
             {previewUrl && (
-              <div className="flex items-center justify-between p-2 md:p-3 bg-amber-100 dark:bg-amber-950/50 rounded-lg md:rounded-xl border border-amber-300 dark:border-amber-800">
-                <span className="text-xs md:text-sm text-amber-900 dark:text-amber-200">Profile picture uploaded</span>
+              <div className="flex items-center justify-between p-2.5 md:p-3 bg-amber-100 dark:bg-amber-950/50 rounded-lg md:rounded-xl border border-amber-300 dark:border-amber-800">
+                <span className="text-sm md:text-sm text-amber-900 dark:text-amber-200">Profile picture uploaded</span>
                 <button
                   type="button"
                   onClick={() => {
                     setProfile({ ...profile, avatar_url: '' });
                     setPreviewUrl('');
                   }}
-                  className="text-xs md:text-sm text-red-600 dark:text-red-400 hover:underline font-semibold"
+                  className="text-sm md:text-sm text-red-600 dark:text-red-400 hover:underline font-semibold"
                 >
                   Remove
                 </button>
@@ -368,15 +368,15 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
             )}
 
             {coverPreviewUrl && (
-              <div className="flex items-center justify-between p-2 md:p-3 bg-amber-100 dark:bg-amber-950/50 rounded-lg md:rounded-xl border border-amber-300 dark:border-amber-800">
-                <span className="text-xs md:text-sm text-amber-900 dark:text-amber-200">Cover photo uploaded</span>
+              <div className="flex items-center justify-between p-2.5 md:p-3 bg-amber-100 dark:bg-amber-950/50 rounded-lg md:rounded-xl border border-amber-300 dark:border-amber-800">
+                <span className="text-sm md:text-sm text-amber-900 dark:text-amber-200">Cover photo uploaded</span>
                 <button
                   type="button"
                   onClick={() => {
                     setProfile({ ...profile, cover_url: '' });
                     setCoverPreviewUrl('');
                   }}
-                  className="text-xs md:text-sm text-red-600 dark:text-red-400 hover:underline font-semibold"
+                  className="text-sm md:text-sm text-red-600 dark:text-red-400 hover:underline font-semibold"
                 >
                   Remove
                 </button>
@@ -384,24 +384,24 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
             )}
 
             {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-2.5 py-2 md:px-4 md:py-3 rounded-lg md:rounded-xl text-xs md:text-sm">
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-3 py-2.5 md:px-4 md:py-3 rounded-lg md:rounded-xl text-sm md:text-sm">
                 {error}
               </div>
             )}
 
             {/* Action buttons */}
-            <div className="flex flex-col gap-2 md:gap-3 pt-2.5 md:pt-4">
+            <div className="flex flex-col gap-2.5 md:gap-3 pt-3 md:pt-4">
               <button
                 onClick={handleSave}
                 disabled={saving || uploading || uploadingCover || !profile.username}
-                className="w-full px-4 py-2 md:px-4 md:py-3 text-sm md:text-base bg-gradient-to-r from-red-800 to-yellow-600 text-white rounded-lg md:rounded-xl font-semibold hover:from-red-900 hover:to-yellow-700 transition disabled:opacity-50 shadow-lg"
+                className="w-full px-4 py-2.5 md:px-4 md:py-3 text-sm md:text-base bg-gradient-to-r from-red-800 to-yellow-600 text-white rounded-lg md:rounded-xl font-semibold hover:from-red-900 hover:to-yellow-700 transition disabled:opacity-50 shadow-lg"
               >
                 {saving ? 'Saving...' : 'Save Changes'}
               </button>
               <button
                 onClick={onClose}
                 disabled={saving || uploading || uploadingCover}
-                className="w-full px-4 py-2 md:px-4 md:py-3 text-sm md:text-base bg-gray-200 dark:bg-amber-950/50 text-gray-700 dark:text-amber-200 rounded-lg md:rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-amber-900/50 transition disabled:opacity-50 border dark:border-amber-800"
+                className="w-full px-4 py-2.5 md:px-4 md:py-3 text-sm md:text-base bg-gray-200 dark:bg-amber-950/50 text-gray-700 dark:text-amber-200 rounded-lg md:rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-amber-900/50 transition disabled:opacity-50 border dark:border-amber-800"
               >
                 Cancel
               </button>
