@@ -374,29 +374,37 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                     )}
                   </div>
                   <div className={`max-w-[75%] md:max-w-[60%] ${isOwn ? 'items-end' : 'items-start'} flex flex-col`}>
-                    <div
-                      className={`px-3 md:px-4 py-2 rounded-2xl shadow-md text-sm md:text-base ${
-                        isOwn
-                          ? 'bg-gradient-to-r from-red-800 to-yellow-600 text-white'
-                          : 'bg-gradient-to-r from-red-900 to-amber-800 text-white border-2 border-yellow-600'
-                      }`}
-                    >
-                      {message.image_url ? (
-                        <div className="space-y-2">
-                          <img
-                            src={message.image_url}
-                            alt="Shared image"
-                            className="rounded-lg w-auto h-auto cursor-pointer hover:opacity-90 transition"
-                            onClick={() => setViewingImage(message.image_url || null)}
-                          />
-                          {message.text !== '📷 Image' && (
+                    {message.image_url ? (
+                      <div className="space-y-2">
+                        <img
+                          src={message.image_url}
+                          alt="Shared image"
+                          className="rounded-lg cursor-pointer hover:opacity-90 transition max-w-full h-auto max-h-80 object-contain"
+                          onClick={() => setViewingImage(message.image_url || null)}
+                        />
+                        {message.text !== '📷 Image' && (
+                          <div
+                            className={`px-3 md:px-4 py-2 rounded-2xl shadow-md text-sm md:text-base ${
+                              isOwn
+                                ? 'bg-gradient-to-r from-red-800 to-yellow-600 text-white'
+                                : 'bg-gradient-to-r from-red-900 to-amber-800 text-white border-2 border-yellow-600'
+                            }`}
+                          >
                             <p className="break-words">{message.text}</p>
-                          )}
-                        </div>
-                      ) : (
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div
+                        className={`px-3 md:px-4 py-2 rounded-2xl shadow-md text-sm md:text-base ${
+                          isOwn
+                            ? 'bg-gradient-to-r from-red-800 to-yellow-600 text-white'
+                            : 'bg-gradient-to-r from-red-900 to-amber-800 text-white border-2 border-yellow-600'
+                        }`}
+                      >
                         <p className="break-words">{message.text}</p>
-                      )}
-                    </div>
+                      </div>
+                    )}
                     <div className="flex items-center gap-1 mt-1">
                       <span className="text-xs text-red-700 dark:text-yellow-600 font-medium">
                         {formatTime(message.created_at)}
