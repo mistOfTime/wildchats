@@ -345,8 +345,8 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
   return (
     <div className="flex-1 flex flex-col overflow-hidden max-w-full">
       {/* Chat Header */}
-      <div className="px-2 py-3 md:px-4 md:py-4 border-b border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg">
-        <div className="flex items-center gap-2 md:gap-3">
+      <div className="px-0 py-3 md:py-4 border-b border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg">
+        <div className="flex items-center gap-2 md:gap-3 px-2 md:px-4">
           {/* Back button for mobile */}
           {onBack && (
             <button
@@ -395,7 +395,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 py-3 md:px-4 md:py-4 space-y-4 bg-gradient-to-br from-amber-50 via-red-50 to-yellow-50 dark:from-gray-900 dark:via-red-950 dark:to-gray-900 scrollbar-hide smooth-scroll max-w-full">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-0 py-3 md:py-4 space-y-4 bg-gradient-to-br from-amber-50 via-red-50 to-yellow-50 dark:from-gray-900 dark:via-red-950 dark:to-gray-900 scrollbar-hide smooth-scroll max-w-full">
         {Object.entries(messageGroups).map(([date, msgs]) => (
           <div key={date}>
             <div className="flex justify-center my-4">
@@ -408,7 +408,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
               return (
                 <div
                   key={message.id}
-                  className={`flex gap-2 md:gap-3 mb-3 md:mb-4 min-w-0 ${isOwn ? 'flex-row-reverse' : ''} group relative`}
+                  className={`flex gap-2 md:gap-3 mb-3 md:mb-4 min-w-0 px-2 md:px-4 ${isOwn ? 'flex-row-reverse' : ''} group relative`}
                   onTouchStart={!isOwn ? (e) => handleSwipeStart(e, message.id) : undefined}
                   onTouchMove={!isOwn ? (e) => handleSwipeMove(e, message.id) : undefined}
                   onTouchEnd={!isOwn ? (e) => handleSwipeEnd(e, message) : undefined}
@@ -577,7 +577,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       <form onSubmit={sendMessage} className="border-t border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg overflow-hidden">
         {/* Reply Preview - Compact but readable */}
         {replyingTo && (
-          <div className="px-2 py-1">
+          <div className="px-1 py-1">
             <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-100 dark:bg-red-950 rounded-md border-l-2 border-yellow-600 max-w-[85%]">
               <svg className="w-3 h-3 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
@@ -603,7 +603,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
           </div>
         )}
         
-        <div className="flex items-center gap-1 px-2 py-2">
+        <div className="flex items-center gap-1 px-1 py-2">
           {/* Image upload button */}
           <input
             ref={fileInputRef}
