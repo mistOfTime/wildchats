@@ -345,7 +345,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
   return (
     <div className="flex-1 flex flex-col overflow-hidden max-w-full">
       {/* Chat Header */}
-      <div className="p-3 md:p-4 border-b border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg">
+      <div className="px-2 py-3 md:px-4 md:py-4 border-b border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg">
         <div className="flex items-center gap-2 md:gap-3">
           {/* Back button for mobile */}
           {onBack && (
@@ -395,7 +395,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 md:p-4 space-y-4 bg-gradient-to-br from-amber-50 via-red-50 to-yellow-50 dark:from-gray-900 dark:via-red-950 dark:to-gray-900 scrollbar-hide smooth-scroll max-w-full">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 py-3 md:px-4 md:py-4 space-y-4 bg-gradient-to-br from-amber-50 via-red-50 to-yellow-50 dark:from-gray-900 dark:via-red-950 dark:to-gray-900 scrollbar-hide smooth-scroll max-w-full">
         {Object.entries(messageGroups).map(([date, msgs]) => (
           <div key={date}>
             <div className="flex justify-center my-4">
@@ -603,7 +603,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
           </div>
         )}
         
-        <div className="flex items-center gap-1 px-1.5 py-1.5">
+        <div className="flex items-center gap-1 px-2 py-2">
           {/* Image upload button */}
           <input
             ref={fileInputRef}
