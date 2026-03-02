@@ -34,13 +34,12 @@ export function usePresence(userId: string) {
     };
 
     // Handle browser close/refresh
-    const handleBeforeUnload = () => {
-      // Use sendBeacon for reliable offline status on page close
-      const data = new FormData();
-      data.append('userId', userId);
-      
+    const handleBeforeUnload = async () => {
       // Synchronous update for immediate effect
-      navigator.sendBeacon?.('/api/offline', data) || setOffline();
+      await supabase
+        .from('users')
+        .update({ online: false, last_seen: new Date().toISOString() })
+        .eq('id', userId);
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);

@@ -154,6 +154,18 @@ export default function Home() {
 
   const handleLogout = async () => {
     try {
+      // First set user offline
+      if (currentUser?.id) {
+        await supabase
+          .from('users')
+          .update({ 
+            online: false,
+            last_seen: new Date().toISOString()
+          })
+          .eq('id', currentUser.id);
+      }
+      
+      // Then logout
       await authService.logout();
       setCurrentUser(null);
       setAuthView('login');
