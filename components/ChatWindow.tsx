@@ -596,7 +596,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploadingImage}
-            className="p-1.5 md:p-2 bg-gradient-to-br from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full transition disabled:opacity-50 shadow-md flex-shrink-0"
+            className="p-1.5 bg-gradient-to-br from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full transition disabled:opacity-50 shadow-md flex-shrink-0"
             title="Send image"
           >
             {uploadingImage ? (
@@ -613,7 +613,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
             <button
               type="button"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className="p-1.5 md:p-2 bg-gradient-to-br from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full transition shadow-md"
+              className="p-1.5 bg-gradient-to-br from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full transition shadow-md"
               title="Add emoji"
             >
               <svg className="w-4 h-4 text-yellow-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -635,16 +635,16 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
             onChange={handleInputChange}
             placeholder="Type a message..."
             disabled={loading}
-            className="flex-1 min-w-0 px-3 py-1.5 text-sm border-2 border-amber-300 dark:border-red-800 rounded-full focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600"
+            className="flex-1 min-w-0 px-2.5 py-1.5 text-sm border-2 border-amber-300 dark:border-red-800 rounded-full focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600"
           />
 
           {/* Send button */}
           <button
             type="submit"
             disabled={loading || (!newMessage.trim() && !uploadingImage)}
-            className="p-1.5 md:p-2 bg-gradient-to-r from-red-800 to-yellow-600 text-white rounded-full font-semibold hover:from-red-900 hover:to-yellow-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex-shrink-0"
+            className="p-2 bg-gradient-to-r from-red-800 to-yellow-600 text-white rounded-full font-semibold hover:from-red-900 hover:to-yellow-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex-shrink-0"
           >
-            <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
             </svg>
           </button>
