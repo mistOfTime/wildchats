@@ -387,7 +387,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                             src={message.image_url}
                             alt="Shared image"
                             className="rounded-lg w-auto h-auto cursor-pointer hover:opacity-90 transition"
-                            onClick={() => setViewingImage(message.image_url)}
+                            onClick={() => setViewingImage(message.image_url || null)}
                           />
                           {message.text !== '📷 Image' && (
                             <p className="break-words">{message.text}</p>
@@ -531,7 +531,6 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
           </button>
         </div>
       </form>
-    </div>
 
       {/* Image Viewer Modal */}
       {viewingImage && (
