@@ -24,7 +24,6 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
   const [swipedMessageId, setSwipedMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { handleTyping } = useTypingIndicator(currentUser.id, selectedUser?.id || null);
 
   useEffect(() => {
@@ -149,11 +148,6 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       // Don't manually add to messages - let real-time subscription handle it
       setNewMessage('');
       setReplyingTo(null); // Clear reply state after sending
-      
-      // Reset textarea height
-      if (textareaRef.current) {
-        textareaRef.current.style.height = 'auto';
-      }
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
@@ -161,15 +155,9 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewMessage(e.target.value);
     handleTyping();
-    
-    // Auto-resize textarea
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
-    }
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -661,21 +649,13 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
           </div>
 
           {/* Message input */}
-          <textarea
-            ref={textareaRef}
+          <input
+            type="text"
             value={newMessage}
             onChange={handleInputChange}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage(e as any);
-              }
-            }}
             placeholder="Type..."
             disabled={loading}
-            rows={1}
-            className="flex-1 min-w-0 max-w-[60%] px-2 py-1.5 text-sm border-2 border-amber-300 dark:border-red-800 rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600 resize-none overflow-y-auto"
-            style={{ minHeight: '32px', maxHeight: '120px' }}
+            className="flex-1 min-w-0 max-w-[60%] px-2 py-1.5 text-sm border-2 border-amber-300 dark:border-red-800 rounded-full focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600"
           />
 
           {/* Send button */}
