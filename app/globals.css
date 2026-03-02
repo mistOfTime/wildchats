@@ -40,6 +40,12 @@ body {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
   }
+  
+  .overflow-wrap-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+  }
 }
 
 /* Hide browser native password reveal buttons */

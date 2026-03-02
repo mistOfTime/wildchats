@@ -390,7 +390,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                                 : 'bg-gradient-to-r from-red-900 to-amber-800 text-white border-2 border-yellow-600'
                             }`}
                           >
-                            <p className="break-words">{message.text}</p>
+                            <p className="break-words break-all overflow-wrap-anywhere">{message.text}</p>
                           </div>
                         )}
                       </div>
@@ -402,7 +402,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                             : 'bg-gradient-to-r from-red-900 to-amber-800 text-white border-2 border-yellow-600'
                         }`}
                       >
-                        <p className="break-words">{message.text}</p>
+                        <p className="break-words break-all overflow-wrap-anywhere">{message.text}</p>
                       </div>
                     )}
                     <div className="flex items-center gap-1 mt-1">
