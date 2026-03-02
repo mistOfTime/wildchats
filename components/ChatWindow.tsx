@@ -20,6 +20,8 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [viewingImage, setViewingImage] = useState<string | null>(null);
+  const [replyingTo, setReplyingTo] = useState<Message | null>(null);
+  const [swipedMessageId, setSwipedMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { handleTyping } = useTypingIndicator(currentUser.id, selectedUser?.id || null);
@@ -123,21 +125,29 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
 
     setLoading(true);
     try {
+      const messageData: any = {
+        sender_id: currentUser.id,
+        receiver_id: selectedUser.id,
+        text: newMessage.trim(),
+        read: false
+      };
+
+      // Add reply information if replying to a message
+      if (replyingTo) {
+        messageData.reply_to_id = replyingTo.id;
+        messageData.reply_to_text = replyingTo.text;
+        messageData.reply_to_sender = replyingTo.sender_id;
+      }
+
       const { error } = await supabase
         .from('messages')
-        .insert([
-          {
-            sender_id: currentUser.id,
-            receiver_id: selectedUser.id,
-            text: newMessage.trim(),
-            read: false
-          }
-        ]);
+        .insert([messageData]);
 
       if (error) throw error;
       
       // Don't manually add to messages - let real-time subscription handle it
       setNewMessage('');
+      setReplyingTo(null); // Clear reply state after sending
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
@@ -222,6 +232,45 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
 
   const handleEmojiSelect = (emoji: string) => {
     setNewMessage((prev) => prev + emoji);
+  };
+
+  const handleSwipeStart = (e: React.TouchEvent, messageId: string) => {
+    const touch = e.touches[0];
+    const messageElement = e.currentTarget as HTMLElement;
+    messageElement.dataset.startX = touch.clientX.toString();
+  };
+
+  const handleSwipeMove = (e: React.TouchEvent, messageId: string) => {
+    const touch = e.touches[0];
+    const messageElement = e.currentTarget as HTMLElement;
+    const startX = parseFloat(messageElement.dataset.startX || '0');
+    const deltaX = touch.clientX - startX;
+    
+    // Only allow swipe to the left (negative deltaX)
+    if (deltaX < 0 && deltaX > -100) {
+      messageElement.style.transform = `translateX(${deltaX}px)`;
+    }
+  };
+
+  const handleSwipeEnd = (e: React.TouchEvent, message: Message) => {
+    const messageElement = e.currentTarget as HTMLElement;
+    const startX = parseFloat(messageElement.dataset.startX || '0');
+    const endX = e.changedTouches[0].clientX;
+    const deltaX = endX - startX;
+    
+    // If swiped more than 50px to the left, trigger reply
+    if (deltaX < -50) {
+      setReplyingTo(message);
+      setSwipedMessageId(message.id);
+      setTimeout(() => setSwipedMessageId(null), 300);
+    }
+    
+    // Reset position
+    messageElement.style.transform = 'translateX(0)';
+  };
+
+  const cancelReply = () => {
+    setReplyingTo(null);
   };
 
   const scrollToBottom = () => {
@@ -344,7 +393,10 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
               return (
                 <div
                   key={message.id}
-                  className={`flex gap-2 md:gap-3 mb-3 md:mb-4 ${isOwn ? 'flex-row-reverse' : ''}`}
+                  className={`flex gap-2 md:gap-3 mb-3 md:mb-4 ${isOwn ? 'flex-row-reverse' : ''} group relative`}
+                  onTouchStart={(e) => handleSwipeStart(e, message.id)}
+                  onTouchMove={(e) => handleSwipeMove(e, message.id)}
+                  onTouchEnd={(e) => handleSwipeEnd(e, message)}
                 >
                   <div className="flex-shrink-0">
                     {isOwn ? (
@@ -373,9 +425,30 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                       )
                     )}
                   </div>
-                  <div className={`max-w-[75%] md:max-w-[60%] ${isOwn ? 'items-end' : 'items-start'} flex flex-col`}>
+                  <div className={`max-w-[75%] md:max-w-[60%] ${isOwn ? 'items-end' : 'items-start'} flex flex-col relative message-swipe`}>
+                    {/* Reply button for desktop - shows on hover */}
+                    <button
+                      onClick={() => setReplyingTo(message)}
+                      className={`hidden md:block absolute top-0 ${isOwn ? 'left-0 -translate-x-8' : 'right-0 translate-x-8'} opacity-0 group-hover:opacity-100 transition-opacity p-1 bg-amber-200 dark:bg-red-900 rounded-full hover:bg-amber-300 dark:hover:bg-red-800`}
+                      title="Reply"
+                    >
+                      <svg className="w-4 h-4 text-red-900 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                      </svg>
+                    </button>
                     {message.image_url ? (
                       <div className="space-y-2">
+                        {/* Show replied message if exists */}
+                        {message.reply_to_text && (
+                          <div className="px-2 py-1.5 bg-black/10 dark:bg-white/10 rounded-lg border-l-2 border-yellow-600 mb-1">
+                            <p className="text-xs opacity-75 mb-0.5">
+                              {message.reply_to_sender === currentUser.id ? 'You' : selectedUser?.username}
+                            </p>
+                            <p className="text-xs opacity-90 truncate">
+                              {message.reply_to_text.length > 40 ? message.reply_to_text.substring(0, 40) + '...' : message.reply_to_text}
+                            </p>
+                          </div>
+                        )}
                         <img
                           src={message.image_url}
                           alt="Shared image"
@@ -402,6 +475,17 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                             : 'bg-gradient-to-r from-red-900 to-amber-800 text-white border-2 border-yellow-600'
                         }`}
                       >
+                        {/* Show replied message if exists */}
+                        {message.reply_to_text && (
+                          <div className="px-2 py-1.5 bg-black/20 dark:bg-white/10 rounded-lg border-l-2 border-yellow-400 mb-2">
+                            <p className="text-xs opacity-75 mb-0.5">
+                              {message.reply_to_sender === currentUser.id ? 'You' : selectedUser?.username}
+                            </p>
+                            <p className="text-xs opacity-90 truncate">
+                              {message.reply_to_text.length > 40 ? message.reply_to_text.substring(0, 40) + '...' : message.reply_to_text}
+                            </p>
+                          </div>
+                        )}
                         <p className="break-words break-all overflow-wrap-anywhere">{message.text}</p>
                       </div>
                     )}
@@ -471,8 +555,33 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       </div>
 
       {/* Message Input */}
-      <form onSubmit={sendMessage} className="p-3 md:p-4 border-t border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg">
-        <div className="flex items-center gap-2">
+      <form onSubmit={sendMessage} className="border-t border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg">
+        {/* Reply Preview */}
+        {replyingTo && (
+          <div className="px-3 pt-2 pb-1">
+            <div className="px-2 py-1.5 bg-amber-100 dark:bg-red-950 rounded-lg border-l-4 border-yellow-600 flex items-start gap-2 max-w-full overflow-hidden">
+              <div className="flex-1 min-w-0 overflow-hidden">
+                <p className="text-xs font-semibold text-red-900 dark:text-yellow-400 mb-0.5">
+                  Replying to {replyingTo.sender_id === currentUser.id ? 'yourself' : selectedUser?.username}
+                </p>
+                <p className="text-xs text-red-700 dark:text-yellow-600 truncate max-w-full overflow-hidden">
+                  {replyingTo.image_url ? '📷 Image' : (replyingTo.text.length > 50 ? replyingTo.text.substring(0, 50) + '...' : replyingTo.text)}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={cancelReply}
+                className="flex-shrink-0 p-0.5 hover:bg-amber-200 dark:hover:bg-red-900 rounded-full transition"
+              >
+                <svg className="w-3.5 h-3.5 text-red-900 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+        
+        <div className="flex items-center gap-1.5 px-2 py-2 md:px-3 md:py-2.5">
           {/* Image upload button */}
           <input
             ref={fileInputRef}
@@ -485,13 +594,13 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploadingImage}
-            className="p-2 md:p-3 bg-gradient-to-br from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full transition disabled:opacity-50 shadow-md flex-shrink-0"
+            className="p-1.5 md:p-2 bg-gradient-to-br from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full transition disabled:opacity-50 shadow-md flex-shrink-0"
             title="Send image"
           >
             {uploadingImage ? (
-              <div className="animate-spin rounded-full h-4 w-4 md:h-5 md:w-5 border-b-2 border-yellow-200"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-200"></div>
             ) : (
-              <svg className="w-4 h-4 md:w-5 md:h-5 text-yellow-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-yellow-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             )}
@@ -502,10 +611,10 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
             <button
               type="button"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className="p-2 md:p-3 bg-gradient-to-br from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full transition shadow-md"
+              className="p-1.5 md:p-2 bg-gradient-to-br from-red-800 to-yellow-600 hover:from-red-900 hover:to-yellow-700 rounded-full transition shadow-md"
               title="Add emoji"
             >
-              <svg className="w-4 h-4 md:w-5 md:h-5 text-yellow-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-yellow-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </button>
@@ -524,14 +633,14 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
             onChange={handleInputChange}
             placeholder="Type a message..."
             disabled={loading}
-            className="flex-1 px-3 py-2 md:px-4 md:py-3 text-sm md:text-base border-2 border-amber-300 dark:border-red-800 rounded-full focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600"
+            className="flex-1 min-w-0 px-3 py-1.5 text-sm border-2 border-amber-300 dark:border-red-800 rounded-full focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600"
           />
 
           {/* Send button */}
           <button
             type="submit"
             disabled={loading || (!newMessage.trim() && !uploadingImage)}
-            className="px-4 py-2 md:px-6 md:py-3 bg-gradient-to-r from-red-800 to-yellow-600 text-white rounded-full font-semibold hover:from-red-900 hover:to-yellow-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex-shrink-0"
+            className="p-1.5 md:p-2 bg-gradient-to-r from-red-800 to-yellow-600 text-white rounded-full font-semibold hover:from-red-900 hover:to-yellow-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex-shrink-0"
           >
             <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

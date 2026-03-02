@@ -46,6 +46,10 @@ body {
     word-break: break-word;
     hyphens: auto;
   }
+  
+  .message-swipe {
+    transition: transform 0.2s ease-out;
+  }
 }
 
 /* Hide browser native password reveal buttons */
