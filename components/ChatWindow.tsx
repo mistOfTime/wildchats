@@ -253,10 +253,10 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
     const startX = parseFloat(messageContent.dataset.startX || '0');
     const deltaX = touch.clientX - startX;
     
-    // Only allow swipe to the left (negative deltaX) up to 80px
-    if (deltaX < 0 && deltaX > -80) {
+    // Only allow swipe to the right (positive deltaX) up to 100px
+    if (deltaX > 0 && deltaX < 100) {
       messageContent.style.transform = `translateX(${deltaX}px)`;
-      messageContent.style.opacity = `${1 - Math.abs(deltaX) / 160}`;
+      messageContent.style.opacity = `${1 - Math.abs(deltaX) / 200}`;
     }
   };
 
@@ -272,8 +272,8 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
     // Re-enable transition for smooth return
     messageContent.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
     
-    // If swiped more than 40px to the left, trigger reply
-    if (deltaX < -40) {
+    // If swiped more than 60px to the right, trigger reply
+    if (deltaX > 60) {
       setReplyingTo(message);
       setSwipedMessageId(message.id);
       setTimeout(() => setSwipedMessageId(null), 300);
