@@ -394,9 +394,9 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                 <div
                   key={message.id}
                   className={`flex gap-2 md:gap-3 mb-3 md:mb-4 ${isOwn ? 'flex-row-reverse' : ''} group relative`}
-                  onTouchStart={(e) => handleSwipeStart(e, message.id)}
-                  onTouchMove={(e) => handleSwipeMove(e, message.id)}
-                  onTouchEnd={(e) => handleSwipeEnd(e, message)}
+                  onTouchStart={!isOwn ? (e) => handleSwipeStart(e, message.id) : undefined}
+                  onTouchMove={!isOwn ? (e) => handleSwipeMove(e, message.id) : undefined}
+                  onTouchEnd={!isOwn ? (e) => handleSwipeEnd(e, message) : undefined}
                 >
                   <div className="flex-shrink-0">
                     {isOwn ? (
@@ -426,16 +426,18 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                     )}
                   </div>
                   <div className={`max-w-[75%] md:max-w-[60%] ${isOwn ? 'items-end' : 'items-start'} flex flex-col relative message-swipe`}>
-                    {/* Reply button for desktop - shows on hover */}
-                    <button
-                      onClick={() => setReplyingTo(message)}
-                      className={`hidden md:block absolute top-0 ${isOwn ? 'left-0 -translate-x-8' : 'right-0 translate-x-8'} opacity-0 group-hover:opacity-100 transition-opacity p-1 bg-amber-200 dark:bg-red-900 rounded-full hover:bg-amber-300 dark:hover:bg-red-800`}
-                      title="Reply"
-                    >
-                      <svg className="w-4 h-4 text-red-900 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                      </svg>
-                    </button>
+                    {/* Reply button for desktop - shows on hover - only for other user's messages */}
+                    {!isOwn && (
+                      <button
+                        onClick={() => setReplyingTo(message)}
+                        className={`hidden md:block absolute top-0 right-0 translate-x-8 opacity-0 group-hover:opacity-100 transition-opacity p-1 bg-amber-200 dark:bg-red-900 rounded-full hover:bg-amber-300 dark:hover:bg-red-800`}
+                        title="Reply"
+                      >
+                        <svg className="w-4 h-4 text-red-900 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                        </svg>
+                      </button>
+                    )}
                     {message.image_url ? (
                       <div className="space-y-2">
                         {/* Show replied message if exists */}
