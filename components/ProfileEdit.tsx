@@ -229,10 +229,10 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
   if (loading) {
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full">
+        <div className="bg-white rounded-2xl p-8 max-w-md w-full">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+            <p className="mt-4 text-gray-600">Loading...</p>
           </div>
         </div>
       </div>
@@ -242,9 +242,9 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
   return (
     <>
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4">
-        <div className="bg-white dark:bg-gradient-to-br dark:from-red-900 dark:via-amber-900 dark:to-red-950 rounded-xl md:rounded-2xl shadow-2xl max-w-[380px] md:max-w-sm w-full overflow-hidden max-h-[92vh] overflow-y-auto">
+        <div className="rounded-xl md:rounded-2xl shadow-2xl max-w-[380px] md:max-w-sm w-full overflow-hidden max-h-[92vh] overflow-y-auto" style={{ backgroundColor: 'white', color: 'black' }}>
         {/* Header with cover photo */}
-        <div className="relative h-28 md:h-32 bg-gradient-to-br from-red-800 to-yellow-600 dark:bg-gray-100 overflow-hidden">
+        <div className="relative h-28 md:h-32 bg-gradient-to-br from-red-800 to-yellow-600 overflow-hidden">
           {coverPreviewUrl && (
             <img
               src={coverPreviewUrl}
@@ -276,7 +276,7 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
         </div>
 
         {/* Content */}
-        <div className="px-4 md:px-8 pb-4 md:pb-8">
+        <div className="px-4 md:px-8 pb-4 md:pb-8" style={{ backgroundColor: 'white' }}>
           {/* Avatar preview with upload button */}
           <div className="relative -mt-12 md:-mt-16 mb-4 md:mb-6 w-24 h-24 md:w-32 md:h-32 mx-auto">
             {previewUrl ? (
@@ -315,27 +315,27 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
             )}
           </div>
 
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 md:mb-6">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-6">
             Edit Profile
           </h2>
 
           {/* Form */}
           <div className="space-y-3 md:space-y-4">
             <div>
-              <label className="block text-sm md:text-sm font-medium text-gray-700 dark:text-amber-200 mb-1.5 md:mb-2">
+              <label className="block text-sm md:text-sm font-medium text-gray-700 mb-1.5 md:mb-2">
                 Username
               </label>
               <input
                 type="text"
                 value={profile.username}
                 onChange={(e) => setProfile({ ...profile, username: e.target.value })}
-                className="w-full px-3.5 py-2.5 md:px-4 md:py-3 text-sm md:text-base border border-gray-300 dark:border-amber-800 rounded-lg md:rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-yellow-500 focus:border-transparent bg-white dark:bg-amber-950/50 dark:text-white transition"
+                className="w-full px-3.5 py-2.5 md:px-4 md:py-3 text-sm md:text-base border border-gray-300 rounded-lg md:rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-gray-900 transition"
                 placeholder="Your name"
               />
             </div>
 
             <div>
-              <label className="block text-sm md:text-sm font-medium text-gray-700 dark:text-amber-200 mb-1.5 md:mb-2">
+              <label className="block text-sm md:text-sm font-medium text-gray-700 mb-1.5 md:mb-2">
                 Bio
               </label>
               <textarea
@@ -343,24 +343,24 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
                 onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
                 rows={2}
                 maxLength={200}
-                className="w-full px-3.5 py-2.5 md:px-4 md:py-3 text-sm md:text-base border border-gray-300 dark:border-amber-800 rounded-lg md:rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-yellow-500 focus:border-transparent bg-white dark:bg-amber-950/50 dark:text-white transition resize-none"
+                className="w-full px-3.5 py-2.5 md:px-4 md:py-3 text-sm md:text-base border border-gray-300 rounded-lg md:rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-gray-900 transition resize-none"
                 placeholder="Tell us about yourself..."
               />
-              <p className="text-xs md:text-xs text-gray-500 dark:text-amber-300 mt-1">
+              <p className="text-xs md:text-xs text-gray-500 mt-1">
                 {profile.bio.length}/200 characters
               </p>
             </div>
 
             {previewUrl && (
-              <div className="flex items-center justify-between p-2.5 md:p-3 bg-amber-100 dark:bg-amber-950/50 rounded-lg md:rounded-xl border border-amber-300 dark:border-amber-800">
-                <span className="text-sm md:text-sm text-amber-900 dark:text-amber-200">Profile picture uploaded</span>
+              <div className="flex items-center justify-between p-2.5 md:p-3 bg-gray-100 rounded-lg md:rounded-xl border border-gray-300">
+                <span className="text-sm md:text-sm text-gray-700">Profile picture uploaded</span>
                 <button
                   type="button"
                   onClick={() => {
                     setProfile({ ...profile, avatar_url: '' });
                     setPreviewUrl('');
                   }}
-                  className="text-sm md:text-sm text-red-600 dark:text-red-400 hover:underline font-semibold"
+                  className="text-sm md:text-sm text-red-600 hover:underline font-semibold"
                 >
                   Remove
                 </button>
@@ -368,15 +368,15 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
             )}
 
             {coverPreviewUrl && (
-              <div className="flex items-center justify-between p-2.5 md:p-3 bg-amber-100 dark:bg-amber-950/50 rounded-lg md:rounded-xl border border-amber-300 dark:border-amber-800">
-                <span className="text-sm md:text-sm text-amber-900 dark:text-amber-200">Cover photo uploaded</span>
+              <div className="flex items-center justify-between p-2.5 md:p-3 bg-gray-100 rounded-lg md:rounded-xl border border-gray-300">
+                <span className="text-sm md:text-sm text-gray-700">Cover photo uploaded</span>
                 <button
                   type="button"
                   onClick={() => {
                     setProfile({ ...profile, cover_url: '' });
                     setCoverPreviewUrl('');
                   }}
-                  className="text-sm md:text-sm text-red-600 dark:text-red-400 hover:underline font-semibold"
+                  className="text-sm md:text-sm text-red-600 hover:underline font-semibold"
                 >
                   Remove
                 </button>
@@ -384,7 +384,7 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
             )}
 
             {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-3 py-2.5 md:px-4 md:py-3 rounded-lg md:rounded-xl text-sm md:text-sm">
+              <div className="bg-red-50 border border-red-200 text-red-600 px-3 py-2.5 md:px-4 md:py-3 rounded-lg md:rounded-xl text-sm md:text-sm">
                 {error}
               </div>
             )}
@@ -401,7 +401,7 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
               <button
                 onClick={onClose}
                 disabled={saving || uploading || uploadingCover}
-                className="w-full px-4 py-2.5 md:px-4 md:py-3 text-sm md:text-base bg-gray-200 dark:bg-amber-950/50 text-gray-700 dark:text-amber-200 rounded-lg md:rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-amber-900/50 transition disabled:opacity-50 border dark:border-amber-800"
+                className="w-full px-4 py-2.5 md:px-4 md:py-3 text-sm md:text-base bg-gray-200 text-gray-700 rounded-lg md:rounded-xl font-semibold hover:bg-gray-300 transition disabled:opacity-50 border border-gray-300"
               >
                 Cancel
               </button>

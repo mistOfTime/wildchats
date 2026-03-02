@@ -86,6 +86,7 @@ export const authService = {
             username: data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'User',
             email: data.user.email!,
             online: true,
+            last_seen: new Date().toISOString(),
           },
         ], {
           onConflict: 'id'
@@ -107,9 +108,13 @@ export const authService = {
     const { data: { user } } = await supabase.auth.getUser();
     
     if (user) {
+      // Set user offline with last_seen timestamp
       await supabase
         .from('users')
-        .update({ online: false })
+        .update({ 
+          online: false,
+          last_seen: new Date().toISOString()
+        })
         .eq('id', user.id);
     }
 

@@ -33,12 +33,24 @@ export function usePresence(userId: string) {
       }
     };
 
+    // Handle browser close/refresh
+    const handleBeforeUnload = () => {
+      // Use sendBeacon for reliable offline status on page close
+      const data = new FormData();
+      data.append('userId', userId);
+      
+      // Synchronous update for immediate effect
+      navigator.sendBeacon?.('/api/offline', data) || setOffline();
+    };
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     // Set offline on unmount
     return () => {
       clearInterval(interval);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
       setOffline();
     };
   }, [userId]);
