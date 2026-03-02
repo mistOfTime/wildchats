@@ -71,9 +71,9 @@ export default function ChatLayout({ currentUser, onLogout, onRefreshUser }: Cha
   );
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-amber-50 via-red-50 to-yellow-50 dark:from-gray-900 dark:via-red-950 dark:to-gray-900 overflow-hidden">
+    <div className="flex h-screen bg-gradient-to-br from-amber-50 via-red-50 to-yellow-50 dark:from-gray-900 dark:via-red-950 dark:to-gray-900 overflow-hidden max-w-full">
       {/* Mobile: Show user list or chat based on selection */}
-      <div className={`${selectedUser ? 'hidden md:flex' : 'flex'} w-full md:w-80 flex-shrink-0`}>
+      <div className={`${selectedUser ? 'hidden md:flex' : 'flex'} w-full md:w-80 flex-shrink-0 overflow-hidden`}>
         <UserList
           users={filteredUsers}
           currentUser={currentUser}
@@ -89,7 +89,7 @@ export default function ChatLayout({ currentUser, onLogout, onRefreshUser }: Cha
       </div>
       
       {/* Chat Window - full width on mobile when user selected */}
-      <div className={`${selectedUser ? 'flex' : 'hidden md:flex'} flex-1`}>
+      <div className={`${selectedUser ? 'flex' : 'hidden md:flex'} flex-1 overflow-hidden max-w-full`}>
         <ChatWindow
           currentUser={currentUser}
           selectedUser={selectedUser}

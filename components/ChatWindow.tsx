@@ -343,7 +343,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
   const messageGroups = groupMessagesByDate();
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="flex-1 flex flex-col overflow-hidden max-w-full">
       {/* Chat Header */}
       <div className="p-3 md:p-4 border-b border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg">
         <div className="flex items-center gap-2 md:gap-3">
@@ -395,7 +395,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 md:p-4 space-y-4 bg-gradient-to-br from-amber-50 via-red-50 to-yellow-50 dark:from-gray-900 dark:via-red-950 dark:to-gray-900 scrollbar-hide smooth-scroll">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 md:p-4 space-y-4 bg-gradient-to-br from-amber-50 via-red-50 to-yellow-50 dark:from-gray-900 dark:via-red-950 dark:to-gray-900 scrollbar-hide smooth-scroll max-w-full">
         {Object.entries(messageGroups).map(([date, msgs]) => (
           <div key={date}>
             <div className="flex justify-center my-4">
@@ -440,7 +440,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                       )
                     )}
                   </div>
-                  <div className={`max-w-[75%] md:max-w-[60%] min-w-0 ${isOwn ? 'items-end' : 'items-start'} flex flex-col relative message-swipe`}>
+                  <div className={`max-w-[75%] md:max-w-[60%] min-w-0 ${isOwn ? 'items-end' : 'items-start'} flex flex-col relative message-swipe`} style={{ maxWidth: '75%' }}>
                     {/* Reply button for desktop - shows on hover - only for other user's messages */}
                     {!isOwn && (
                       <button
@@ -454,10 +454,10 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                       </button>
                     )}
                     {message.image_url ? (
-                      <div className="space-y-2">
+                      <div className="space-y-2 max-w-full">
                         {/* Show replied message if exists */}
                         {message.reply_to_text && (
-                          <div className="px-2 py-1 bg-black/10 dark:bg-white/10 rounded border-l-2 border-yellow-400 mb-1 max-w-full">
+                          <div className="px-2 py-1 bg-black/10 dark:bg-white/10 rounded border-l-2 border-yellow-400 mb-1 max-w-full" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                             <p className="text-[10px] opacity-75 truncate">
                               {message.reply_to_sender === currentUser.id ? 'You' : selectedUser?.username}
                             </p>
@@ -474,11 +474,12 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                         />
                         {message.text !== '📷 Image' && (
                           <div
-                            className={`px-3 md:px-4 py-2 rounded-2xl shadow-md text-sm md:text-base ${
+                            className={`px-3 md:px-4 py-2 rounded-2xl shadow-md text-sm md:text-base max-w-full ${
                               isOwn
                                 ? 'bg-gradient-to-r from-red-800 to-yellow-600 text-white'
                                 : 'bg-gradient-to-r from-red-900 to-amber-800 text-white border-2 border-yellow-600'
                             }`}
+                            style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
                           >
                             <p className="break-words break-all overflow-wrap-anywhere">{message.text}</p>
                           </div>
@@ -486,15 +487,16 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                       </div>
                     ) : (
                       <div
-                        className={`px-3 md:px-4 py-2 rounded-2xl shadow-md text-sm md:text-base ${
+                        className={`px-3 md:px-4 py-2 rounded-2xl shadow-md text-sm md:text-base max-w-full ${
                           isOwn
                             ? 'bg-gradient-to-r from-red-800 to-yellow-600 text-white'
                             : 'bg-gradient-to-r from-red-900 to-amber-800 text-white border-2 border-yellow-600'
                         }`}
+                        style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
                       >
                         {/* Show replied message if exists */}
                         {message.reply_to_text && (
-                          <div className="px-2 py-1 bg-black/20 dark:bg-white/10 rounded border-l-2 border-yellow-400 mb-2 max-w-full">
+                          <div className="px-2 py-1 bg-black/20 dark:bg-white/10 rounded border-l-2 border-yellow-400 mb-2 max-w-full" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                             <p className="text-[10px] opacity-75 truncate">
                               {message.reply_to_sender === currentUser.id ? 'You' : selectedUser?.username}
                             </p>
