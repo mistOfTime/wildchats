@@ -330,7 +330,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-4 bg-gradient-to-br from-amber-50 via-red-50 to-yellow-50 dark:from-gray-900 dark:via-red-950 dark:to-gray-900 scrollbar-hide">
+      <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-4 bg-gradient-to-br from-amber-50 via-red-50 to-yellow-50 dark:from-gray-900 dark:via-red-950 dark:to-gray-900 scrollbar-hide smooth-scroll">
         {Object.entries(messageGroups).map(([date, msgs]) => (
           <div key={date}>
             <div className="flex justify-center my-4">

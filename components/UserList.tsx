@@ -98,7 +98,7 @@ export default function UserList({
       </div>
 
       {/* User List */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide">
+      <div className="flex-1 overflow-y-auto scrollbar-hide smooth-scroll">
         {users.length === 0 ? (
           <div className="p-4 text-center text-red-600 dark:text-yellow-500">
             No users found
