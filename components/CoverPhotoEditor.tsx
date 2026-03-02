@@ -22,6 +22,30 @@ export default function CoverPhotoEditor({ imageUrl, onSave, onCancel }: CoverPh
     img.crossOrigin = 'anonymous';
     img.onload = () => {
       imageRef.current = img;
+      
+      // Center image initially
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        const imgAspect = img.width / img.height;
+        const canvasAspect = canvasWidth / canvasHeight;
+        
+        let imgWidth, imgHeight;
+        if (imgAspect > canvasAspect) {
+          imgWidth = canvasWidth;
+          imgHeight = canvasWidth / imgAspect;
+        } else {
+          imgHeight = canvasHeight;
+          imgWidth = canvasHeight * imgAspect;
+        }
+        
+        setPosition({
+          x: (canvasWidth - imgWidth) / 2,
+          y: (canvasHeight - imgHeight) / 2
+        });
+      }
+      
       drawImage();
     };
     img.src = imageUrl;
@@ -42,11 +66,27 @@ export default function CoverPhotoEditor({ imageUrl, onSave, onCancel }: CoverPh
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Calculate dimensions
+    // Calculate dimensions to fit image while maintaining aspect ratio
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
-    const imgWidth = img.width * scale;
-    const imgHeight = img.height * scale;
+    const imgAspect = img.width / img.height;
+    const canvasAspect = canvasWidth / canvasHeight;
+    
+    let imgWidth = img.width * scale;
+    let imgHeight = img.height * scale;
+    
+    // Scale image to fit canvas initially
+    if (scale === 1) {
+      if (imgAspect > canvasAspect) {
+        // Image is wider
+        imgWidth = canvasWidth;
+        imgHeight = canvasWidth / imgAspect;
+      } else {
+        // Image is taller
+        imgHeight = canvasHeight;
+        imgWidth = canvasHeight * imgAspect;
+      }
+    }
 
     // Draw image
     ctx.drawImage(
