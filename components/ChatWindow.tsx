@@ -343,7 +343,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
   const messageGroups = groupMessagesByDate();
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col overflow-hidden">
       {/* Chat Header */}
       <div className="p-3 md:p-4 border-b border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg">
         <div className="flex items-center gap-2 md:gap-3">
@@ -395,7 +395,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-4 bg-gradient-to-br from-amber-50 via-red-50 to-yellow-50 dark:from-gray-900 dark:via-red-950 dark:to-gray-900 scrollbar-hide smooth-scroll">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 md:p-4 space-y-4 bg-gradient-to-br from-amber-50 via-red-50 to-yellow-50 dark:from-gray-900 dark:via-red-950 dark:to-gray-900 scrollbar-hide smooth-scroll">
         {Object.entries(messageGroups).map(([date, msgs]) => (
           <div key={date}>
             <div className="flex justify-center my-4">
@@ -457,12 +457,12 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                       <div className="space-y-2">
                         {/* Show replied message if exists */}
                         {message.reply_to_text && (
-                          <div className="px-2 py-1.5 bg-black/10 dark:bg-white/10 rounded-lg border-l-2 border-yellow-600 mb-1">
-                            <p className="text-xs opacity-75 mb-0.5">
+                          <div className="px-2 py-1 bg-black/10 dark:bg-white/10 rounded border-l-2 border-yellow-400 mb-1 max-w-full">
+                            <p className="text-[10px] opacity-75 truncate">
                               {message.reply_to_sender === currentUser.id ? 'You' : selectedUser?.username}
                             </p>
-                            <p className="text-xs opacity-90 truncate">
-                              {message.reply_to_text.length > 40 ? message.reply_to_text.substring(0, 40) + '...' : message.reply_to_text}
+                            <p className="text-[10px] opacity-90 truncate">
+                              {message.reply_to_text}
                             </p>
                           </div>
                         )}
@@ -494,12 +494,12 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                       >
                         {/* Show replied message if exists */}
                         {message.reply_to_text && (
-                          <div className="px-2 py-1.5 bg-black/20 dark:bg-white/10 rounded-lg border-l-2 border-yellow-400 mb-2">
-                            <p className="text-xs opacity-75 mb-0.5">
+                          <div className="px-2 py-1 bg-black/20 dark:bg-white/10 rounded border-l-2 border-yellow-400 mb-2 max-w-full">
+                            <p className="text-[10px] opacity-75 truncate">
                               {message.reply_to_sender === currentUser.id ? 'You' : selectedUser?.username}
                             </p>
-                            <p className="text-xs opacity-90 truncate">
-                              {message.reply_to_text.length > 40 ? message.reply_to_text.substring(0, 40) + '...' : message.reply_to_text}
+                            <p className="text-[10px] opacity-90 truncate">
+                              {message.reply_to_text}
                             </p>
                           </div>
                         )}
@@ -572,7 +572,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       </div>
 
       {/* Message Input */}
-      <form onSubmit={sendMessage} className="border-t border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg">
+      <form onSubmit={sendMessage} className="border-t border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg overflow-hidden">
         {/* Reply Preview - Compact but readable */}
         {replyingTo && (
           <div className="px-2 py-1">
@@ -584,7 +584,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                 <p className="text-[11px] font-semibold text-red-900 dark:text-yellow-400 truncate leading-tight">
                   {replyingTo.sender_id === currentUser.id ? 'You' : selectedUser?.username}
                 </p>
-                <p className="text-[11px] text-red-700 dark:text-yellow-600 truncate leading-tight">
+                <p className="text-[11px] text-red-700 dark:text-yellow-600 truncate leading-tight break-all overflow-wrap-anywhere">
                   {replyingTo.image_url ? '📷 Image' : replyingTo.text}
                 </p>
               </div>
