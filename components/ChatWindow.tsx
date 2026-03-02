@@ -408,7 +408,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
               return (
                 <div
                   key={message.id}
-                  className={`flex gap-2 md:gap-3 mb-3 md:mb-4 ${isOwn ? 'flex-row-reverse' : ''} group relative`}
+                  className={`flex gap-2 md:gap-3 mb-3 md:mb-4 min-w-0 ${isOwn ? 'flex-row-reverse' : ''} group relative`}
                   onTouchStart={!isOwn ? (e) => handleSwipeStart(e, message.id) : undefined}
                   onTouchMove={!isOwn ? (e) => handleSwipeMove(e, message.id) : undefined}
                   onTouchEnd={!isOwn ? (e) => handleSwipeEnd(e, message) : undefined}
@@ -440,7 +440,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                       )
                     )}
                   </div>
-                  <div className={`max-w-[75%] md:max-w-[60%] ${isOwn ? 'items-end' : 'items-start'} flex flex-col relative message-swipe`}>
+                  <div className={`max-w-[75%] md:max-w-[60%] min-w-0 ${isOwn ? 'items-end' : 'items-start'} flex flex-col relative message-swipe`}>
                     {/* Reply button for desktop - shows on hover - only for other user's messages */}
                     {!isOwn && (
                       <button
