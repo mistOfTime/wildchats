@@ -574,7 +574,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       </div>
 
       {/* Message Input */}
-      <form onSubmit={sendMessage} className="border-t border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg overflow-hidden">
+      <form onSubmit={sendMessage} className="border-t border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg overflow-visible relative z-10">
         {/* Reply Preview - Compact but readable */}
         {replyingTo && (
           <div className="px-1 py-1">
@@ -629,7 +629,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
           </button>
 
           {/* Emoji picker button */}
-          <div className="relative flex-shrink-0">
+          <div className="relative flex-shrink-0 z-[9999]">
             <button
               type="button"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
