@@ -125,9 +125,9 @@ export default function ProfileView({ userId, onClose, onStartChat, isOwnProfile
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gradient-to-br dark:from-red-900 dark:via-amber-900 dark:to-red-950 rounded-2xl shadow-2xl max-w-sm md:max-w-md w-full overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-sm md:max-w-md w-full overflow-hidden">
         {/* Header with close button */}
-        <div className="relative h-28 md:h-32 bg-gradient-to-br from-red-800 to-yellow-600 dark:bg-gray-100 overflow-hidden">
+        <div className="relative h-28 md:h-32 bg-gradient-to-br from-red-800 to-yellow-600 overflow-hidden">
           {profile.cover_url && (
             <img
               src={profile.cover_url}
@@ -139,7 +139,7 @@ export default function ProfileView({ userId, onClose, onStartChat, isOwnProfile
             onClick={onClose}
             className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 dark:bg-gray-300/50 dark:hover:bg-gray-400/50 rounded-full backdrop-blur-sm transition"
           >
-            <svg className="w-5 h-5 text-white dark:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -163,7 +163,7 @@ export default function ProfileView({ userId, onClose, onStartChat, isOwnProfile
               </div>
             )}
             {/* Online status indicator */}
-            <div className={`absolute bottom-2 right-2 w-5 h-5 md:w-6 md:h-6 rounded-full border-2 border-white dark:border-gray-800 ${
+            <div className={`absolute bottom-2 right-2 w-5 h-5 md:w-6 md:h-6 rounded-full border-2 border-white ${
               profile.online ? 'bg-green-500' : 'bg-gray-400'
             }`}></div>
           </div>
@@ -173,12 +173,12 @@ export default function ProfileView({ userId, onClose, onStartChat, isOwnProfile
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1">
               {profile.username}
             </h2>
-            <p className="text-xs md:text-sm text-gray-500 dark:text-amber-200 mb-2 break-all">
+            <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-2 break-all">
               {profile.email}
             </p>
             <div className="flex items-center gap-2">
               <div className={`w-2 h-2 rounded-full ${profile.online ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-              <span className="text-xs md:text-sm text-gray-600 dark:text-amber-300">
+              <span className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
                 {getLastSeenText(profile.last_seen, profile.online)}
               </span>
             </div>
@@ -186,8 +186,8 @@ export default function ProfileView({ userId, onClose, onStartChat, isOwnProfile
 
           {/* Bio */}
           <div className="mb-6">
-            <h3 className="text-xs md:text-sm font-semibold text-gray-700 dark:text-amber-200 mb-2">About</h3>
-            <p className="text-sm md:text-base text-gray-600 dark:text-amber-100">
+            <h3 className="text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">About</h3>
+            <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
               {profile.bio || 'No bio yet'}
             </p>
           </div>
