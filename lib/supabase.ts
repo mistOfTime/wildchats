@@ -25,6 +25,9 @@ export type Message = {
   file_url?: string;
   file_name?: string;
   file_type?: string;
+  reply_to_id?: string;
+  reply_to_text?: string;
+  reply_to_sender?: string;
   created_at: string;
   sender?: User;
 };
