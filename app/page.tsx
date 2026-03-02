@@ -13,6 +13,7 @@ type AuthView = 'login' | 'signup' | 'forgot-password';
 export default function Home() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [authView, setAuthView] = useState<AuthView>('login');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Load and apply saved theme on mount - default to light mode (no dark class)
@@ -85,7 +86,7 @@ export default function Home() {
         setCurrentUser(null);
       }
     } finally {
-      // Loading removed
+      setLoading(false);
     }
   };
 
@@ -160,6 +161,17 @@ export default function Home() {
       console.error('Error logging out:', error);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-600">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto mb-4"></div>
+          <p className="text-white text-lg font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!currentUser) {
     if (authView === 'signup') {

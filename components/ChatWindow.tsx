@@ -19,6 +19,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
   const [isTyping, setIsTyping] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [viewingImage, setViewingImage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { handleTyping } = useTypingIndicator(currentUser.id, selectedUser?.id || null);
@@ -385,8 +386,8 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                           <img
                             src={message.image_url}
                             alt="Shared image"
-                            className="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-90 transition"
-                            onClick={() => window.open(message.image_url, '_blank')}
+                            className="rounded-lg w-auto h-auto cursor-pointer hover:opacity-90 transition"
+                            onClick={() => setViewingImage(message.image_url)}
                           />
                           {message.text !== '📷 Image' && (
                             <p className="break-words">{message.text}</p>
@@ -530,6 +531,28 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
           </button>
         </div>
       </form>
+    </div>
+
+      {/* Image Viewer Modal */}
+      {viewingImage && (
+        <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
+          <button
+            onClick={() => setViewingImage(null)}
+            className="absolute top-4 left-4 p-2 bg-white/20 hover:bg-white/30 rounded-full backdrop-blur-sm transition z-10"
+            aria-label="Close image"
+          >
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <img
+            src={viewingImage}
+            alt="Full size"
+            className="max-w-full max-h-full object-contain p-4"
+            onClick={() => setViewingImage(null)}
+          />
+        </div>
+      )}
     </div>
   );
 }
