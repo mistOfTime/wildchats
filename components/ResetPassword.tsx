@@ -46,17 +46,24 @@ export default function ResetPassword() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 px-4">
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-100 dark:border-gray-700 text-center">
-          <div className="inline-block p-3 bg-green-100 dark:bg-green-900/20 rounded-full mb-4">
-            <svg className="w-12 h-12 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-600 px-4 relative overflow-hidden">
+        {/* Floating logos background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-12 h-12 md:w-16 md:h-16 rounded-full opacity-10 animate-float" style={{ top: '10%', left: '10%', animationDelay: '0s' }} />
+          <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-16 h-16 md:w-20 md:h-20 rounded-full opacity-10 animate-float" style={{ top: '20%', right: '15%', animationDelay: '1s' }} />
+          <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-10 h-10 md:w-14 md:h-14 rounded-full opacity-10 animate-float" style={{ bottom: '15%', left: '20%', animationDelay: '2s' }} />
+        </div>
+
+        <div className="bg-gradient-to-br from-red-900/80 via-amber-900/80 to-red-950/80 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm md:max-w-md border-2 border-amber-700/50 text-center relative z-10">
+          <div className="inline-block p-3 bg-green-900/30 rounded-full mb-4 ring-4 ring-green-700">
+            <svg className="w-12 h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-2xl font-bold text-white mb-2">
             Password Reset!
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-amber-200">
             Redirecting to login...
           </p>
         </div>
@@ -65,25 +72,39 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 px-4">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-100 dark:border-gray-700">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-600 px-4 relative overflow-hidden">
+      {/* Floating logos background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-12 h-12 md:w-16 md:h-16 rounded-full opacity-10 animate-float" style={{ top: '10%', left: '10%', animationDelay: '0s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-16 h-16 md:w-20 md:h-20 rounded-full opacity-10 animate-float" style={{ top: '20%', right: '15%', animationDelay: '1s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-10 h-10 md:w-14 md:h-14 rounded-full opacity-10 animate-float" style={{ bottom: '15%', left: '20%', animationDelay: '2s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-14 h-14 md:w-18 md:h-18 rounded-full opacity-10 animate-float" style={{ bottom: '25%', right: '10%', animationDelay: '0.5s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-12 h-12 md:w-16 md:h-16 rounded-full opacity-10 animate-float" style={{ top: '50%', left: '5%', animationDelay: '1.5s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-10 h-10 md:w-14 md:h-14 rounded-full opacity-10 animate-float" style={{ top: '60%', right: '8%', animationDelay: '2.5s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-8 h-8 md:w-12 md:h-12 rounded-full opacity-10 animate-float" style={{ top: '35%', left: '25%', animationDelay: '0.8s' }} />
+        <img src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" alt="" className="absolute w-14 h-14 md:w-18 md:h-18 rounded-full opacity-10 animate-float" style={{ top: '70%', left: '15%', animationDelay: '1.8s' }} />
+      </div>
+
+      <div className="bg-gradient-to-br from-red-900/80 via-amber-900/80 to-red-950/80 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm md:max-w-md border-2 border-amber-700/50 relative z-10">
         <div className="text-center mb-8">
-          <div className="inline-block p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl mb-4">
-            <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
+          <div className="inline-block p-3 bg-amber-800 rounded-full mb-4 shadow-lg ring-4 ring-yellow-600">
+            <img 
+              src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" 
+              alt="CIT Logo" 
+              className="w-20 h-20 rounded-full object-cover"
+            />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Create New Password
+          <h1 className="text-3xl font-bold text-white">
+            New Password
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-2">
-            Enter your new password
+          <p className="text-amber-200 mt-2">
+            Create your new password
           </p>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-amber-200 mb-2">
               New Password
             </label>
             <div className="relative">
@@ -93,13 +114,13 @@ export default function ResetPassword() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Enter new password"
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white transition"
+                className="w-full px-4 py-3 pr-12 bg-white border-2 border-amber-800 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-gray-900 placeholder-gray-400 transition"
               />
               {password && (
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800 transition"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
@@ -118,7 +139,7 @@ export default function ResetPassword() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-amber-200 mb-2">
               Confirm Password
             </label>
             <div className="relative">
@@ -128,13 +149,13 @@ export default function ResetPassword() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 placeholder="Confirm new password"
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white transition"
+                className="w-full px-4 py-3 pr-12 bg-white border-2 border-amber-800 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-gray-900 placeholder-gray-400 transition"
               />
               {confirmPassword && (
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800 transition"
                   aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                 >
                   {showConfirmPassword ? (
@@ -153,7 +174,7 @@ export default function ResetPassword() {
           </div>
 
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-xl text-sm">
+            <div className="bg-red-950/50 border border-red-800 text-red-300 px-4 py-3 rounded-xl text-sm">
               {error}
             </div>
           )}
@@ -161,11 +182,20 @@ export default function ResetPassword() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition disabled:opacity-50 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+            className="w-full bg-gradient-to-r from-red-800 to-yellow-600 text-white py-3 rounded-xl font-semibold hover:from-red-900 hover:to-yellow-700 transition disabled:opacity-50 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
           >
             {loading ? 'Resetting...' : 'Reset Password'}
           </button>
         </form>
+
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => router.push('/')}
+            className="text-sm text-amber-200 hover:text-white transition"
+          >
+            ← Back to Login
+          </button>
+        </div>
       </div>
     </div>
   );
