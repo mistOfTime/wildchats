@@ -575,14 +575,14 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       <form onSubmit={sendMessage} className="border-t border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg">
         {/* Reply Preview */}
         {replyingTo && (
-          <div className="px-3 pt-2 pb-1">
-            <div className="px-2 py-1.5 bg-amber-100 dark:bg-red-950 rounded-lg border-l-4 border-yellow-600 flex items-start gap-2 max-w-full overflow-hidden">
+          <div className="px-2 pt-2 pb-1">
+            <div className="px-2 py-1 bg-amber-100 dark:bg-red-950 rounded-md border-l-2 border-yellow-600 flex items-center gap-1.5 max-w-full">
               <div className="flex-1 min-w-0 overflow-hidden">
-                <p className="text-xs font-semibold text-red-900 dark:text-yellow-400 mb-0.5">
+                <p className="text-xs font-semibold text-red-900 dark:text-yellow-400 truncate">
                   Replying to {replyingTo.sender_id === currentUser.id ? 'yourself' : selectedUser?.username}
                 </p>
-                <p className="text-xs text-red-700 dark:text-yellow-600 truncate max-w-full overflow-hidden">
-                  {replyingTo.image_url ? '📷 Image' : (replyingTo.text.length > 50 ? replyingTo.text.substring(0, 50) + '...' : replyingTo.text)}
+                <p className="text-xs text-red-700 dark:text-yellow-600 truncate">
+                  {replyingTo.image_url ? '📷 Image' : replyingTo.text}
                 </p>
               </div>
               <button
@@ -590,7 +590,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                 onClick={cancelReply}
                 className="flex-shrink-0 p-0.5 hover:bg-amber-200 dark:hover:bg-red-900 rounded-full transition"
               >
-                <svg className="w-3.5 h-3.5 text-red-900 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3 h-3 text-red-900 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
