@@ -48,7 +48,8 @@ body {
   }
   
   .message-swipe {
-    transition: transform 0.2s ease-out;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    will-change: transform, opacity;
   }
 }
 

@@ -237,36 +237,51 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
   const handleSwipeStart = (e: React.TouchEvent, messageId: string) => {
     const touch = e.touches[0];
     const messageElement = e.currentTarget as HTMLElement;
-    messageElement.dataset.startX = touch.clientX.toString();
+    const messageContent = messageElement.querySelector('.message-swipe') as HTMLElement;
+    if (messageContent) {
+      messageContent.dataset.startX = touch.clientX.toString();
+      messageContent.style.transition = 'none';
+    }
   };
 
   const handleSwipeMove = (e: React.TouchEvent, messageId: string) => {
     const touch = e.touches[0];
     const messageElement = e.currentTarget as HTMLElement;
-    const startX = parseFloat(messageElement.dataset.startX || '0');
+    const messageContent = messageElement.querySelector('.message-swipe') as HTMLElement;
+    if (!messageContent) return;
+    
+    const startX = parseFloat(messageContent.dataset.startX || '0');
     const deltaX = touch.clientX - startX;
     
-    // Only allow swipe to the left (negative deltaX)
-    if (deltaX < 0 && deltaX > -100) {
-      messageElement.style.transform = `translateX(${deltaX}px)`;
+    // Only allow swipe to the left (negative deltaX) up to 80px
+    if (deltaX < 0 && deltaX > -80) {
+      messageContent.style.transform = `translateX(${deltaX}px)`;
+      messageContent.style.opacity = `${1 - Math.abs(deltaX) / 160}`;
     }
   };
 
   const handleSwipeEnd = (e: React.TouchEvent, message: Message) => {
     const messageElement = e.currentTarget as HTMLElement;
-    const startX = parseFloat(messageElement.dataset.startX || '0');
+    const messageContent = messageElement.querySelector('.message-swipe') as HTMLElement;
+    if (!messageContent) return;
+    
+    const startX = parseFloat(messageContent.dataset.startX || '0');
     const endX = e.changedTouches[0].clientX;
     const deltaX = endX - startX;
     
-    // If swiped more than 50px to the left, trigger reply
-    if (deltaX < -50) {
+    // Re-enable transition for smooth return
+    messageContent.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+    
+    // If swiped more than 40px to the left, trigger reply
+    if (deltaX < -40) {
       setReplyingTo(message);
       setSwipedMessageId(message.id);
       setTimeout(() => setSwipedMessageId(null), 300);
     }
     
-    // Reset position
-    messageElement.style.transform = 'translateX(0)';
+    // Reset position and opacity
+    messageContent.style.transform = 'translateX(0)';
+    messageContent.style.opacity = '1';
   };
 
   const cancelReply = () => {
