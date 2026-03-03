@@ -157,12 +157,10 @@ export default function UserList({
                         e.stopPropagation();
                         onViewNote(user);
                       }}
-                      className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-red-600 to-yellow-500 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-900 shadow-lg cursor-pointer hover:scale-110 transition-transform"
+                      className="absolute -top-2 -right-2 px-2 py-0.5 bg-gradient-to-r from-red-600 to-yellow-500 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-900 shadow-lg cursor-pointer hover:scale-105 transition-transform"
                       title="View note"
                     >
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                      </svg>
+                      <span className="text-[10px] font-bold text-white whitespace-nowrap">Notes</span>
                     </span>
                   )}
                 </div>
