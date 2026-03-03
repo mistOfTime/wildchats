@@ -98,7 +98,8 @@ export default function Home() {
         .from('users')
         .select('*')
         .eq('id', userId)
-        .single();
+        .single()
+        .abortSignal(AbortSignal.timeout(8000)); // 8 second timeout
       
       if (error) {
         console.error('Error loading profile:', error);
@@ -137,6 +138,7 @@ export default function Home() {
       }
     } catch (error: any) {
       console.error('Failed to load user profile:', error);
+      // Silently fail - app will use cached data
     }
   };
 
