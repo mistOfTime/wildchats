@@ -701,7 +701,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
             onChange={handleInputChange}
             placeholder="Type..."
             disabled={loading}
-            className="flex-1 min-w-0 max-w-[65%] px-3 py-2 text-sm border-2 border-amber-300 dark:border-red-800 rounded-full focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600 mx-2"
+            className="flex-1 min-w-0 max-w-[65%] px-3 py-2 text-sm border-2 border-amber-300 dark:border-red-800 rounded-full focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600 mx-2 break-words overflow-wrap-anywhere"
           />
 
           {/* Send button */}
