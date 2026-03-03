@@ -649,7 +649,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
           </div>
         )}
         
-        <div className="flex items-center gap-1.5 px-0 py-2">
+        <div className="flex items-center gap-2 px-2 py-2">
           {/* Image upload button */}
           <input
             ref={fileInputRef}
