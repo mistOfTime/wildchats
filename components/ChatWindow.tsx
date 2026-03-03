@@ -695,13 +695,23 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
           </div>
 
           {/* Message input */}
-          <input
-            type="text"
+          <textarea
             value={newMessage}
-            onChange={handleInputChange}
+            onChange={(e) => {
+              setNewMessage(e.target.value);
+              handleTyping();
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage(e);
+              }
+            }}
             placeholder="Type..."
             disabled={loading}
-            className="flex-1 min-w-0 max-w-[65%] px-3 py-2 text-sm border-2 border-amber-300 dark:border-red-800 rounded-full focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600 mx-2 break-words overflow-wrap-anywhere"
+            rows={1}
+            className="flex-1 min-w-0 max-w-[65%] px-3 py-2 text-sm border-2 border-amber-300 dark:border-red-800 rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600 mx-2 resize-none overflow-y-auto"
+            style={{ maxHeight: '100px', wordBreak: 'break-all', overflowWrap: 'anywhere' }}
           />
 
           {/* Send button */}
