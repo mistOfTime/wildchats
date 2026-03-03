@@ -106,7 +106,7 @@ export default function NoteViewer({
         {/* Note Content */}
         <div className="p-6 space-y-4">
           <div className="bg-gradient-to-r from-amber-50 to-red-50 border-l-4 border-yellow-600 p-4 rounded-lg">
-            <p className="text-gray-900 text-base leading-relaxed">
+            <p className="text-gray-900 text-base leading-relaxed break-words overflow-wrap-anywhere">
               {noteText}
             </p>
           </div>
