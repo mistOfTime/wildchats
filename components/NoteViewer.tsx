@@ -36,14 +36,16 @@ export default function NoteViewer({
     setError('');
 
     try {
-      // Send reply as a message to the note owner
+      // Send reply as a message with note as the replied-to content
       const { error: messageError } = await supabase
         .from('messages')
         .insert({
           sender_id: currentUserId,
           receiver_id: noteOwnerId,
-          text: `📝 Replied to your note: "${noteText}"\n\n${replyText.trim()}`,
-          read: false
+          text: replyText.trim(),
+          read: false,
+          reply_to_text: `📝 Note: ${noteText}`,
+          reply_to_sender: noteOwnerId
         });
 
       if (messageError) throw messageError;
