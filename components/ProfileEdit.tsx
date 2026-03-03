@@ -203,23 +203,36 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
 
     try {
       console.log('Saving profile with username:', profile.username);
+      console.log('User ID:', userId);
       
-      const { error } = await supabase
+      const updateData = {
+        username: profile.username.trim(),
+        bio: profile.bio.trim(),
+        avatar_url: profile.avatar_url,
+        cover_url: profile.cover_url,
+      };
+      
+      console.log('Update data:', updateData);
+      
+      const { data, error } = await supabase
         .from('users')
-        .update({
-          username: profile.username.trim(),
-          bio: profile.bio.trim(),
-          avatar_url: profile.avatar_url,
-          cover_url: profile.cover_url,
-        })
-        .eq('id', userId);
+        .update(updateData)
+        .eq('id', userId)
+        .select();
 
       if (error) {
         console.error('Supabase update error:', error);
         throw error;
       }
 
-      console.log('Profile saved successfully');
+      console.log('Profile saved successfully, returned data:', data);
+      
+      if (!data || data.length === 0) {
+        console.warn('Update returned no data - might be RLS policy issue');
+        setError('Update may have failed due to permissions. Please check Supabase RLS policies.');
+        setSaving(false);
+        return;
+      }
       
       // Wait a moment for database to propagate
       await new Promise(resolve => setTimeout(resolve, 500));
