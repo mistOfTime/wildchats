@@ -68,7 +68,14 @@ export default function Home() {
 
   const checkUser = async () => {
     try {
-      const session = await authService.getSession();
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Session check timeout')), 5000)
+      );
+      
+      const sessionPromise = authService.getSession();
+      
+      const session = await Promise.race([sessionPromise, timeoutPromise]) as any;
+      
       if (session?.user) {
         await loadUserProfile(session.user.id);
       } else {
@@ -83,8 +90,10 @@ export default function Home() {
         console.log('Clearing invalid session data...');
         localStorage.clear();
         sessionStorage.clear();
-        setCurrentUser(null);
       }
+      
+      // Always set currentUser to null on error so login page shows
+      setCurrentUser(null);
     } finally {
       setLoading(false);
     }
