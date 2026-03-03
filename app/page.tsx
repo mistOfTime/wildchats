@@ -69,7 +69,7 @@ export default function Home() {
   const checkUser = async () => {
     try {
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Session check timeout')), 5000)
+        setTimeout(() => reject(new Error('Session check timeout')), 3000)
       );
       
       const sessionPromise = authService.getSession();
@@ -79,28 +79,17 @@ export default function Home() {
       if (session?.user) {
         await loadUserProfile(session.user.id);
       } else {
-        // No valid session, clear any bad data
         setCurrentUser(null);
       }
     } catch (error: any) {
       // Silently handle timeout - just show login page
       if (error?.message === 'Session check timeout') {
         console.log('Session check timed out, showing login page');
-        setCurrentUser(null);
-        setLoading(false);
-        return;
+      } else {
+        console.error('Error checking user:', error);
       }
       
-      console.error('Error checking user:', error);
-      
-      // If we get an auth error (like invalid refresh token), clear everything
-      if (error?.message?.includes('refresh') || error?.message?.includes('token')) {
-        console.log('Clearing invalid session data...');
-        localStorage.clear();
-        sessionStorage.clear();
-      }
-      
-      // Always set currentUser to null on error so login page shows
+      // Always show login page on any error
       setCurrentUser(null);
     } finally {
       setLoading(false);
@@ -116,37 +105,11 @@ export default function Home() {
         .select('*')
         .eq('id', userId)
         .single()
-        .abortSignal(AbortSignal.timeout(8000)); // 8 second timeout
+        .abortSignal(AbortSignal.timeout(5000)); // 5 second timeout
       
       if (error) {
         console.error('Error loading profile:', error);
-        
-        // If user doesn't exist, create profile
-        if (error.code === 'PGRST116') {
-          console.log('User profile not found, creating...');
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            const { data: newProfile, error: createError } = await supabase
-              .from('users')
-              .insert([{
-                id: user.id,
-                username: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
-                email: user.email!,
-                online: true,
-              }])
-              .select()
-              .single();
-            
-            if (createError) {
-              console.error('Failed to create profile:', createError);
-            } else if (newProfile) {
-              console.log('Profile created:', newProfile);
-              setCurrentUser(newProfile);
-              return;
-            }
-          }
-        }
-        return; // Don't throw, just return
+        return;
       }
       
       if (data) {
@@ -155,7 +118,6 @@ export default function Home() {
       }
     } catch (error: any) {
       console.error('Failed to load user profile:', error);
-      // Silently fail - app will use cached data
     }
   };
 
