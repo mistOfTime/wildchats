@@ -24,6 +24,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
   const [swipedMessageId, setSwipedMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { handleTyping } = useTypingIndicator(currentUser.id, selectedUser?.id || null);
 
   useEffect(() => {
@@ -151,6 +152,11 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       // Don't manually add to messages - let real-time subscription handle it
       setNewMessage('');
       setReplyingTo(null); // Clear reply state after sending
+      
+      // Reset textarea height
+      if (textareaRef.current) {
+        textareaRef.current.style.height = '40px';
+      }
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
@@ -696,10 +702,15 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
 
           {/* Message input */}
           <textarea
+            ref={textareaRef}
             value={newMessage}
             onChange={(e) => {
               setNewMessage(e.target.value);
               handleTyping();
+              // Auto-resize textarea with max height limit
+              e.target.style.height = '40px';
+              const newHeight = Math.min(e.target.scrollHeight, 80);
+              e.target.style.height = newHeight + 'px';
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
@@ -710,8 +721,8 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
             placeholder="Type..."
             disabled={loading}
             rows={1}
-            className="flex-1 min-w-0 max-w-[65%] px-3 py-2 text-sm border-2 border-amber-300 dark:border-red-800 rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600 mx-2 resize-none overflow-y-auto scrollbar-hide"
-            style={{ wordBreak: 'break-all', overflowWrap: 'anywhere', height: '40px', maxHeight: '40px' }}
+            className="flex-1 min-w-0 max-w-[65%] px-3 py-2 text-sm border-2 border-amber-300 dark:border-red-800 rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600 mx-2 resize-none overflow-y-auto scrollbar-hide transition-none"
+            style={{ wordBreak: 'break-all', overflowWrap: 'anywhere', height: '40px', maxHeight: '80px' }}
           />
 
           {/* Send button */}
