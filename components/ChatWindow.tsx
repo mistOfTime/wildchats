@@ -378,8 +378,8 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden max-w-full">
-      {/* Chat Header */}
-      <div className="px-0 py-3 md:py-4 border-b border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg">
+      {/* Chat Header - Sticky on mobile only */}
+      <div className="sticky md:relative top-0 z-20 px-0 py-3 md:py-4 border-b border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg">
         <div className="flex items-center gap-2 md:gap-3 px-2 md:px-4">
           {/* Back button for mobile */}
           {onBack && (
