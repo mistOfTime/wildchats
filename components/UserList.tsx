@@ -13,6 +13,8 @@ interface UserListProps {
   theme: 'light' | 'dark';
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  onEditNote: () => void;
+  onViewNote: (user: User) => void;
 }
 
 export default function UserList({
@@ -25,7 +27,9 @@ export default function UserList({
   onToggleTheme,
   theme,
   searchQuery,
-  onSearchChange
+  onSearchChange,
+  onEditNote,
+  onViewNote
 }: UserListProps) {
   const getLastSeen = (lastSeen?: string) => {
     if (!lastSeen) return '';
@@ -70,21 +74,32 @@ export default function UserList({
               </p>
             </div>
           </div>
-          <button
-            onClick={onToggleTheme}
-            className="p-2 hover:opacity-80 transition flex-shrink-0"
-            title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-          >
-            {theme === 'light' ? (
-              <svg className="w-5 h-5 text-yellow-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          <div className="flex gap-2">
+            <button
+              onClick={onEditNote}
+              className="p-2 hover:opacity-80 transition flex-shrink-0"
+              title="Edit your note"
+            >
+              <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
               </svg>
-            ) : (
-              <svg className="w-5 h-5 text-yellow-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            )}
-          </button>
+            </button>
+            <button
+              onClick={onToggleTheme}
+              className="p-2 hover:opacity-80 transition flex-shrink-0"
+              title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+            >
+              {theme === 'light' ? (
+                <svg className="w-5 h-5 text-yellow-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-yellow-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
         
         {/* Search */}
@@ -135,6 +150,21 @@ export default function UserList({
                       user.online ? 'bg-green-500' : 'bg-gray-400'
                     }`}
                   />
+                  {/* Note indicator */}
+                  {user.note && (
+                    <span 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onViewNote(user);
+                      }}
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-red-600 to-yellow-500 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-900 shadow-lg cursor-pointer hover:scale-110 transition-transform"
+                      title="View note"
+                    >
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                      </svg>
+                    </span>
+                  )}
                 </div>
                 <div 
                   className="flex-1 min-w-0"

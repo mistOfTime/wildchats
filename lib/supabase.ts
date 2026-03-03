@@ -13,6 +13,15 @@ export type User = {
   avatar_url?: string;
   last_seen?: string;
   created_at: string;
+  note?: UserNote;
+};
+
+export type UserNote = {
+  id: string;
+  user_id: string;
+  note_text: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export type Message = {

@@ -7,6 +7,8 @@ import UserList from './UserList';
 import ChatWindow from './ChatWindow';
 import ProfileView from './ProfileView';
 import ProfileEdit from './ProfileEdit';
+import NoteEditor from './NoteEditor';
+import NoteViewer from './NoteViewer';
 
 interface ChatLayoutProps {
   currentUser: User;
@@ -21,6 +23,9 @@ export default function ChatLayout({ currentUser, onLogout, onRefreshUser }: Cha
   const [searchQuery, setSearchQuery] = useState('');
   const [viewingProfile, setViewingProfile] = useState<string | null>(null);
   const [editingProfile, setEditingProfile] = useState(false);
+  const [editingNote, setEditingNote] = useState(false);
+  const [currentNote, setCurrentNote] = useState<string>('');
+  const [viewingNote, setViewingNote] = useState<User | null>(null);
 
   usePresence(currentUser.id);
 
@@ -48,14 +53,47 @@ export default function ChatLayout({ currentUser, onLogout, onRefreshUser }: Cha
   }, []);
 
   const loadUsers = async () => {
-    const { data } = await supabase
+    // First load users
+    const { data: usersData } = await supabase
       .from('users')
       .select('*')
       .neq('id', currentUser.id)
       .order('online', { ascending: false })
       .order('username');
     
-    if (data) setUsers(data);
+    if (!usersData) {
+      setUsers([]);
+      return;
+    }
+
+    // Then load notes separately
+    const { data: notesData } = await supabase
+      .from('user_notes')
+      .select('*');
+    
+    // Combine users with their notes
+    const usersWithNotes = usersData.map(user => {
+      const note = notesData?.find(n => n.user_id === user.id);
+      return {
+        ...user,
+        note: note || undefined
+      };
+    });
+    
+    setUsers(usersWithNotes);
+
+    // Load current user's note
+    const { data: noteData } = await supabase
+      .from('user_notes')
+      .select('note_text')
+      .eq('user_id', currentUser.id)
+      .single();
+    
+    if (noteData) {
+      setCurrentNote(noteData.note_text);
+    } else {
+      setCurrentNote('');
+    }
   };
 
   const toggleTheme = () => {
@@ -85,6 +123,8 @@ export default function ChatLayout({ currentUser, onLogout, onRefreshUser }: Cha
           theme={theme}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          onEditNote={() => setEditingNote(true)}
+          onViewNote={(user) => setViewingNote(user)}
         />
       </div>
       
@@ -131,6 +171,36 @@ export default function ChatLayout({ currentUser, onLogout, onRefreshUser }: Cha
             ]);
             
             console.log('Refresh complete');
+          }}
+        />
+      )}
+
+      {/* Note Editor Modal */}
+      {editingNote && (
+        <NoteEditor
+          userId={currentUser.id}
+          currentNote={currentNote}
+          onClose={() => setEditingNote(false)}
+          onSave={async () => {
+            setEditingNote(false);
+            await loadUsers();
+          }}
+        />
+      )}
+
+      {/* Note Viewer Modal */}
+      {viewingNote && viewingNote.note && (
+        <NoteViewer
+          noteOwnerId={viewingNote.id}
+          noteOwnerName={viewingNote.username}
+          noteOwnerAvatar={viewingNote.avatar_url}
+          noteText={viewingNote.note.note_text}
+          currentUserId={currentUser.id}
+          onClose={() => setViewingNote(null)}
+          onReply={(userId) => {
+            setViewingNote(null);
+            const user = users.find(u => u.id === userId);
+            if (user) setSelectedUser(user);
           }}
         />
       )}
