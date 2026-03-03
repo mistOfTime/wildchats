@@ -115,6 +115,30 @@ export default function LoginForm({ onSuccess, onSwitchToSignUp, onForgotPasswor
       </div>
 
       <div className="bg-gradient-to-br from-red-900/80 via-amber-900/80 to-red-950/80 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm md:max-w-md border-2 border-amber-700/50 relative z-10">
+        {/* About App Section with Animation */}
+        <div className="mb-6 p-4 bg-gradient-to-r from-amber-900/50 to-red-900/50 rounded-2xl border border-yellow-600/30">
+          <h2 className="text-lg md:text-xl font-bold text-yellow-400 mb-3 text-center animate-fade-in">
+            Welcome to WildChats! 🎉
+          </h2>
+          <div className="text-xs md:text-sm text-amber-100 space-y-2 leading-relaxed animate-slide-up">
+            <p className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              This app was built by the creator for fun and for CIT students (like me XD), where students can chat and interact with each other.
+            </p>
+            <p className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
+              <span className="font-semibold text-yellow-400">Before you start:</span> The creator didn't implement cit.edu email verification, only personal email accounts. You need to sign up first and save your password.
+            </p>
+            <p className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
+              After saving your password, you can proceed to log in and enter the chat. If you forgot your password, click "Forgot Password" to get a code and create a new password.
+            </p>
+            <p className="animate-fade-in" style={{ animationDelay: '0.8s' }}>
+              <span className="font-semibold text-yellow-400">Found a bug?</span> If you encounter any issues or bugs, you can directly PM me to report them, and I'll fix them as soon as possible (in my free time hehe).
+            </p>
+            <p className="text-center font-semibold text-yellow-300 mt-3 animate-fade-in" style={{ animationDelay: '1s' }}>
+              Thank you for your support and enjoy! 💛
+            </p>
+          </div>
+        </div>
+
         <div className="text-center mb-8">
           <div className="inline-block p-3 bg-amber-800 rounded-full mb-4 shadow-lg ring-4 ring-yellow-600">
             <img 
