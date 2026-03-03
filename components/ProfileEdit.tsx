@@ -192,22 +192,36 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
 
   const handleSave = async () => {
     setError('');
+    
+    // Validate username
+    if (!profile.username.trim()) {
+      setError('Username cannot be empty');
+      return;
+    }
+    
     setSaving(true);
 
     try {
+      console.log('Saving profile with username:', profile.username);
+      
       const { error } = await supabase
         .from('users')
         .update({
-          username: profile.username,
-          bio: profile.bio,
+          username: profile.username.trim(),
+          bio: profile.bio.trim(),
           avatar_url: profile.avatar_url,
           cover_url: profile.cover_url,
         })
         .eq('id', userId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase update error:', error);
+        throw error;
+      }
 
-      // Don't reload the page, just close and refresh parent
+      console.log('Profile saved successfully');
+      
+      // Call onSave to refresh parent
       onSave();
     } catch (error: any) {
       console.error('Error saving profile:', error);
