@@ -100,12 +100,18 @@ export default function Home() {
     try {
       console.log('Loading user profile for:', userId);
       
-      const { data, error } = await supabase
+      // Create timeout promise
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Profile load timeout')), 5000)
+      );
+      
+      const loadPromise = supabase
         .from('users')
         .select('*')
         .eq('id', userId)
-        .single()
-        .abortSignal(AbortSignal.timeout(5000)); // 5 second timeout
+        .single();
+      
+      const { data, error } = await Promise.race([loadPromise, timeoutPromise]) as any;
       
       if (error) {
         console.error('Error loading profile:', error);
