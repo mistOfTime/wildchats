@@ -700,18 +700,23 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
             onChange={(e) => {
               setNewMessage(e.target.value);
               handleTyping();
+              // Auto-resize textarea
+              e.target.style.height = 'auto';
+              e.target.style.height = Math.min(e.target.scrollHeight, 100) + 'px';
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage(e);
+                // Reset height after sending
+                e.currentTarget.style.height = 'auto';
               }
             }}
             placeholder="Type..."
             disabled={loading}
             rows={1}
-            className="flex-1 min-w-0 max-w-[65%] px-3 py-2 text-sm border-2 border-amber-300 dark:border-red-800 rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600 mx-2 resize-none overflow-y-auto scrollbar-hide"
-            style={{ maxHeight: '100px', wordBreak: 'break-all', overflowWrap: 'anywhere' }}
+            className="flex-1 min-w-0 max-w-[65%] px-3 py-2 text-sm border-2 border-amber-300 dark:border-red-800 rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white disabled:opacity-50 placeholder-red-400 dark:placeholder-yellow-600 mx-2 resize-none overflow-y-hidden scrollbar-hide"
+            style={{ wordBreak: 'break-all', overflowWrap: 'anywhere', minHeight: '40px' }}
           />
 
           {/* Send button */}
