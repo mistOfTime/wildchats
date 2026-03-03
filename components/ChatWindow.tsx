@@ -135,8 +135,11 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       // Add reply information if replying to a message
       if (replyingTo) {
         messageData.reply_to_id = replyingTo.id;
-        messageData.reply_to_text = replyingTo.text;
+        messageData.reply_to_text = replyingTo.image_url ? '📷 Image' : replyingTo.text;
         messageData.reply_to_sender = replyingTo.sender_id;
+        if (replyingTo.image_url) {
+          messageData.reply_to_image_url = replyingTo.image_url;
+        }
       }
 
       const { error } = await supabase
@@ -201,22 +204,35 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
         .getPublicUrl(filePath);
 
       // Send message with image
+      const messageData: any = {
+        sender_id: currentUser.id,
+        receiver_id: selectedUser.id,
+        text: '📷 Image',
+        image_url: publicUrl,
+        read: false
+      };
+
+      // Add reply information if replying to a message
+      if (replyingTo) {
+        messageData.reply_to_id = replyingTo.id;
+        messageData.reply_to_text = replyingTo.image_url ? '📷 Image' : replyingTo.text;
+        messageData.reply_to_sender = replyingTo.sender_id;
+        if (replyingTo.image_url) {
+          messageData.reply_to_image_url = replyingTo.image_url;
+        }
+      }
+
       const { error } = await supabase
         .from('messages')
-        .insert([
-          {
-            sender_id: currentUser.id,
-            receiver_id: selectedUser.id,
-            text: '📷 Image',
-            image_url: publicUrl,
-            read: false
-          }
-        ]);
+        .insert([messageData]);
 
       if (error) {
         console.error('Message insert error:', error);
         throw new Error(error.message || 'Failed to send image message');
       }
+      
+      // Clear reply state after sending
+      setReplyingTo(null);
       
       // Don't manually add to messages - let real-time subscription handle it
     } catch (error: any) {
@@ -465,14 +481,21 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                     {message.image_url ? (
                       <div className="space-y-2 max-w-full">
                         {/* Show replied message if exists */}
-                        {message.reply_to_text && (
+                        {(message.reply_to_text || message.reply_to_image_url) && (
                           <div className="px-2 py-1 bg-black/10 dark:bg-white/10 rounded border-l-2 border-yellow-400 mb-1 max-w-full" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                             <p className="text-[10px] opacity-75 truncate">
                               {message.reply_to_sender === currentUser.id ? 'You' : selectedUser?.username}
                             </p>
-                            <p className="text-[10px] opacity-90 truncate">
-                              {message.reply_to_text}
-                            </p>
+                            {message.reply_to_image_url ? (
+                              <div className="flex items-center gap-1">
+                                <img src={message.reply_to_image_url} alt="Reply" className="w-8 h-8 rounded object-cover" />
+                                <p className="text-[10px] opacity-90 truncate">📷 Image</p>
+                              </div>
+                            ) : (
+                              <p className="text-[10px] opacity-90 truncate">
+                                {message.reply_to_text}
+                              </p>
+                            )}
                           </div>
                         )}
                         <img
@@ -504,14 +527,21 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                         style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
                       >
                         {/* Show replied message if exists */}
-                        {message.reply_to_text && (
+                        {(message.reply_to_text || message.reply_to_image_url) && (
                           <div className="px-2 py-1 bg-black/20 dark:bg-white/10 rounded border-l-2 border-yellow-400 mb-2 max-w-full" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                             <p className="text-[10px] opacity-75 truncate">
                               {message.reply_to_sender === currentUser.id ? 'You' : selectedUser?.username}
                             </p>
-                            <p className="text-[10px] opacity-90 truncate">
-                              {message.reply_to_text}
-                            </p>
+                            {message.reply_to_image_url ? (
+                              <div className="flex items-center gap-1">
+                                <img src={message.reply_to_image_url} alt="Reply" className="w-8 h-8 rounded object-cover" />
+                                <p className="text-[10px] opacity-90 truncate">📷 Image</p>
+                              </div>
+                            ) : (
+                              <p className="text-[10px] opacity-90 truncate">
+                                {message.reply_to_text}
+                              </p>
+                            )}
                           </div>
                         )}
                         <p className="break-words break-all overflow-wrap-anywhere">{message.text}</p>
@@ -595,9 +625,16 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                 <p className="text-[11px] font-semibold text-red-900 dark:text-yellow-400 truncate leading-tight">
                   {replyingTo.sender_id === currentUser.id ? 'You' : selectedUser?.username}
                 </p>
-                <p className="text-[11px] text-red-700 dark:text-yellow-600 truncate leading-tight break-all overflow-wrap-anywhere">
-                  {replyingTo.image_url ? '📷 Image' : replyingTo.text}
-                </p>
+                {replyingTo.image_url ? (
+                  <div className="flex items-center gap-1">
+                    <img src={replyingTo.image_url} alt="Reply" className="w-6 h-6 rounded object-cover" />
+                    <p className="text-[11px] text-red-700 dark:text-yellow-600 truncate leading-tight">📷 Image</p>
+                  </div>
+                ) : (
+                  <p className="text-[11px] text-red-700 dark:text-yellow-600 truncate leading-tight break-all overflow-wrap-anywhere">
+                    {replyingTo.text}
+                  </p>
+                )}
               </div>
               <button
                 type="button"

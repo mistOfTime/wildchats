@@ -28,6 +28,7 @@ export type Message = {
   reply_to_id?: string;
   reply_to_text?: string;
   reply_to_sender?: string;
+  reply_to_image_url?: string;
   created_at: string;
   sender?: User;
 };
