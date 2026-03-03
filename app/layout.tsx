@@ -10,10 +10,6 @@ export const metadata: Metadata = {
     maximumScale: 1,
     userScalable: false,
   },
-  icons: {
-    icon: '/wildcats-logo.svg',
-    apple: '/wildcats-logo.svg',
-  },
 };
 
 export default function RootLayout({

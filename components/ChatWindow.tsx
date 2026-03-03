@@ -240,6 +240,7 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
     const messageContent = messageElement.querySelector('.message-swipe') as HTMLElement;
     if (messageContent) {
       messageContent.dataset.startX = touch.clientX.toString();
+      messageContent.dataset.startY = touch.clientY.toString();
       messageContent.style.transition = 'none';
     }
   };
@@ -251,10 +252,13 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
     if (!messageContent) return;
     
     const startX = parseFloat(messageContent.dataset.startX || '0');
+    const startY = parseFloat(messageContent.dataset.startY || '0');
     const deltaX = touch.clientX - startX;
+    const deltaY = Math.abs(touch.clientY - startY);
     
-    // Only allow swipe to the right (positive deltaX) up to 100px
-    if (deltaX > 0 && deltaX < 100) {
+    // Only allow swipe if horizontal movement is greater than vertical (not scrolling)
+    // and swipe is to the right (positive deltaX) up to 100px
+    if (deltaX > 0 && deltaX < 100 && deltaY < Math.abs(deltaX) * 0.5) {
       messageContent.style.transform = `translateX(${deltaX}px)`;
       messageContent.style.opacity = `${1 - Math.abs(deltaX) / 200}`;
     }
@@ -266,14 +270,19 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
     if (!messageContent) return;
     
     const startX = parseFloat(messageContent.dataset.startX || '0');
+    const startY = parseFloat(messageContent.dataset.startY || '0');
     const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
     const deltaX = endX - startX;
+    const deltaY = Math.abs(endY - startY);
     
     // Re-enable transition for smooth return
     messageContent.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
     
-    // If swiped more than 60px to the right, trigger reply
-    if (deltaX > 60) {
+    // Only trigger reply if:
+    // 1. Swiped more than 80px to the right (increased from 60px)
+    // 2. Horizontal movement is at least 2x the vertical movement (not scrolling)
+    if (deltaX > 80 && deltaX > deltaY * 2) {
       setReplyingTo(message);
       setSwipedMessageId(message.id);
       setTimeout(() => setSwipedMessageId(null), 300);

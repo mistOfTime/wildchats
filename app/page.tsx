@@ -68,8 +68,9 @@ export default function Home() {
 
   const checkUser = async () => {
     try {
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Session check timeout')), 3000)
+      // Add 5 second timeout
+      const timeoutPromise = new Promise((resolve) => 
+        setTimeout(() => resolve(null), 5000)
       );
       
       const sessionPromise = authService.getSession();
@@ -82,14 +83,7 @@ export default function Home() {
         setCurrentUser(null);
       }
     } catch (error: any) {
-      // Silently handle timeout - just show login page
-      if (error?.message === 'Session check timeout') {
-        console.log('Session check timed out, showing login page');
-      } else {
-        console.error('Error checking user:', error);
-      }
-      
-      // Always show login page on any error
+      console.error('Error checking user:', error);
       setCurrentUser(null);
     } finally {
       setLoading(false);
@@ -100,9 +94,9 @@ export default function Home() {
     try {
       console.log('Loading user profile for:', userId);
       
-      // Create timeout promise
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Profile load timeout')), 5000)
+      // Add 5 second timeout
+      const timeoutPromise = new Promise((resolve) => 
+        setTimeout(() => resolve({ data: null, error: new Error('Timeout') }), 5000)
       );
       
       const loadPromise = supabase
