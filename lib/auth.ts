@@ -38,22 +38,30 @@ export const authService = {
       // Wait a bit for auth to complete
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      const { error: profileError } = await supabase
+      // Check if profile already exists
+      const { data: existingProfile } = await supabase
         .from('users')
-        .upsert([
-          {
-            id: data.user.id,
-            username: fullName,
-            email: email,
-            online: true,
-          },
-        ], {
-          onConflict: 'id'
-        });
+        .select('id')
+        .eq('id', data.user.id)
+        .single();
+      
+      // Only create if doesn't exist
+      if (!existingProfile) {
+        const { error: profileError } = await supabase
+          .from('users')
+          .insert([
+            {
+              id: data.user.id,
+              username: fullName,
+              email: email,
+              online: true,
+            },
+          ]);
 
-      if (profileError) {
-        console.error('Profile creation error:', profileError);
-        // Don't throw here, user is created in auth
+        if (profileError) {
+          console.error('Profile creation error:', profileError);
+          // Don't throw here, user is created in auth
+        }
       }
     }
 
@@ -74,29 +82,23 @@ export const authService = {
       throw error;
     }
 
-    console.log('Auth successful, updating user profile...');
+    console.log('Auth successful, updating online status...');
 
-    // Update online status and ensure user profile exists
+    // Update online status ONLY - don't overwrite username
     if (data.user) {
-      const { error: upsertError } = await supabase
+      const { error: updateError } = await supabase
         .from('users')
-        .upsert([
-          {
-            id: data.user.id,
-            username: data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'User',
-            email: data.user.email!,
-            online: true,
-            last_seen: new Date().toISOString(),
-          },
-        ], {
-          onConflict: 'id'
-        });
+        .update({
+          online: true,
+          last_seen: new Date().toISOString(),
+        })
+        .eq('id', data.user.id);
 
-      if (upsertError) {
-        console.error('Profile upsert error:', upsertError);
+      if (updateError) {
+        console.error('Profile update error:', updateError);
         // Don't throw, user is still logged in
       } else {
-        console.log('User profile updated successfully');
+        console.log('Online status updated successfully');
       }
     }
 
