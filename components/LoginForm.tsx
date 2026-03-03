@@ -17,6 +17,7 @@ export default function LoginForm({ onSuccess, onSwitchToSignUp, onForgotPasswor
   const [loading, setLoading] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +38,79 @@ export default function LoginForm({ onSuccess, onSwitchToSignUp, onForgotPasswor
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-600 px-4 relative overflow-hidden">
+      {/* Welcome Modal */}
+      {showWelcomeModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-red-800 to-yellow-600 p-4 rounded-t-2xl relative">
+              <h2 className="text-xl md:text-2xl font-bold text-white text-center">
+                WELCOME TO WILDCHATS!
+              </h2>
+            </div>
+
+            {/* Content */}
+            <div className="p-5 md:p-6 space-y-4 text-gray-800">
+              <div className="bg-yellow-50 border-l-4 border-yellow-600 p-3 rounded">
+                <p className="font-semibold text-base text-gray-900">
+                  You are about to join the WILDCHATS COMMUNITY!
+                </p>
+              </div>
+
+              <div className="space-y-3 text-sm md:text-base">
+                <p className="leading-relaxed">
+                  Get to know the following information about this platform.
+                </p>
+
+                <div className="space-y-3">
+                  <div>
+                    <h3 className="font-bold text-red-800 mb-1.5">1. About WildChats</h3>
+                    <p className="leading-relaxed pl-3">
+                      This app was built for fun and for CIT students, where students can chat and interact with each other in real-time.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-bold text-red-800 mb-1.5">2. Before You Start</h3>
+                    <div className="leading-relaxed pl-3 space-y-1.5">
+                      <p>Only personal email accounts are supported.</p>
+                      <ul className="list-disc pl-4 space-y-1">
+                        <li><span className="font-semibold">Sign up first</span> and save your password</li>
+                        <li>Then <span className="font-semibold">log in</span> to enter the chat</li>
+                        <li>Forgot password? Click <span className="font-semibold">"Forgot Password"</span> to reset</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="font-bold text-red-800 mb-1.5">3. Found a Bug?</h3>
+                    <p className="leading-relaxed pl-3">
+                      If you encounter any issues, PM me and I'll fix them ASAP (in my free time hehe).
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-r from-red-50 to-yellow-50 border border-yellow-600 rounded-lg p-3 mt-4">
+                  <p className="text-center font-semibold text-red-900 text-sm md:text-base">
+                    Thank you for your support and enjoy! 💛
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="bg-gray-50 p-4 rounded-b-2xl border-t">
+              <button
+                onClick={() => setShowWelcomeModal(false)}
+                className="w-full bg-gradient-to-r from-red-800 to-yellow-600 text-white py-2.5 rounded-xl font-semibold hover:from-red-900 hover:to-yellow-700 transition shadow-lg text-sm md:text-base"
+              >
+                Got it, Let's Chat!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Settings Gear Icon - Top Right */}
       <div className="absolute top-4 right-4 z-20">
         <button
@@ -115,30 +189,6 @@ export default function LoginForm({ onSuccess, onSwitchToSignUp, onForgotPasswor
       </div>
 
       <div className="bg-gradient-to-br from-red-900/80 via-amber-900/80 to-red-950/80 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-sm md:max-w-md border-2 border-amber-700/50 relative z-10">
-        {/* About App Section with Animation */}
-        <div className="mb-6 p-4 bg-gradient-to-r from-amber-900/50 to-red-900/50 rounded-2xl border border-yellow-600/30">
-          <h2 className="text-lg md:text-xl font-bold text-yellow-400 mb-3 text-center animate-fade-in">
-            Welcome to WildChats! 🎉
-          </h2>
-          <div className="text-xs md:text-sm text-amber-100 space-y-2 leading-relaxed animate-slide-up">
-            <p className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              This app was built by the creator for fun and for CIT students (like me XD), where students can chat and interact with each other.
-            </p>
-            <p className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              <span className="font-semibold text-yellow-400">Before you start:</span> The creator didn't implement cit.edu email verification, only personal email accounts. You need to sign up first and save your password.
-            </p>
-            <p className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
-              After saving your password, you can proceed to log in and enter the chat. If you forgot your password, click "Forgot Password" to get a code and create a new password.
-            </p>
-            <p className="animate-fade-in" style={{ animationDelay: '0.8s' }}>
-              <span className="font-semibold text-yellow-400">Found a bug?</span> If you encounter any issues or bugs, you can directly PM me to report them, and I'll fix them as soon as possible (in my free time hehe).
-            </p>
-            <p className="text-center font-semibold text-yellow-300 mt-3 animate-fade-in" style={{ animationDelay: '1s' }}>
-              Thank you for your support and enjoy! 💛
-            </p>
-          </div>
-        </div>
-
         <div className="text-center mb-8">
           <div className="inline-block p-3 bg-amber-800 rounded-full mb-4 shadow-lg ring-4 ring-yellow-600">
             <img 
