@@ -94,18 +94,11 @@ export default function Home() {
     try {
       console.log('Loading user profile for:', userId);
       
-      // Add timeout to prevent infinite loading - increased to 10 seconds
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Profile load timeout')), 10000)
-      );
-      
-      const loadPromise = supabase
+      const { data, error } = await supabase
         .from('users')
         .select('*')
         .eq('id', userId)
         .single();
-      
-      const { data, error } = await Promise.race([loadPromise, timeoutPromise]) as any;
       
       if (error) {
         console.error('Error loading profile:', error);
@@ -135,7 +128,7 @@ export default function Home() {
             }
           }
         }
-        throw error;
+        return; // Don't throw, just return
       }
       
       if (data) {
@@ -144,8 +137,6 @@ export default function Home() {
       }
     } catch (error: any) {
       console.error('Failed to load user profile:', error);
-      // Don't show error to user, just log it
-      // The app will continue to work with cached user data
     }
   };
 
