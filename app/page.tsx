@@ -83,6 +83,14 @@ export default function Home() {
         setCurrentUser(null);
       }
     } catch (error: any) {
+      // Silently handle timeout - just show login page
+      if (error?.message === 'Session check timeout') {
+        console.log('Session check timed out, showing login page');
+        setCurrentUser(null);
+        setLoading(false);
+        return;
+      }
+      
       console.error('Error checking user:', error);
       
       // If we get an auth error (like invalid refresh token), clear everything
