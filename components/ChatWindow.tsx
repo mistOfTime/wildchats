@@ -32,6 +32,9 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
       loadMessages();
       markMessagesAsRead();
       
+      // Clear reply state when switching users
+      setReplyingTo(null);
+      
       // Subscribe to new messages - listen to all messages and filter client-side
       const messagesChannel = supabase
         .channel(`messages:${currentUser.id}:${selectedUser.id}`)
@@ -488,17 +491,17 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                       <div className="space-y-2 max-w-full">
                         {/* Show replied message if exists */}
                         {(message.reply_to_text || message.reply_to_image_url) && (
-                          <div className="px-2 py-1 bg-black/10 dark:bg-white/10 rounded border-l-2 border-yellow-400 mb-1 max-w-full" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
-                            <p className="text-[10px] opacity-75 break-words">
+                          <div className="px-2 py-1 bg-black/10 dark:bg-white/10 rounded border-l-2 border-yellow-400 mb-1 max-w-full" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere', whiteSpace: 'normal' }}>
+                            <p className="text-[10px] opacity-75 break-words whitespace-normal">
                               {message.reply_to_sender === currentUser.id ? 'You' : selectedUser?.username}
                             </p>
                             {message.reply_to_image_url ? (
                               <div className="flex items-center gap-1">
                                 <img src={message.reply_to_image_url} alt="Reply" className="w-8 h-8 rounded object-cover" />
-                                <p className="text-[10px] opacity-90 break-words">📷 Image</p>
+                                <p className="text-[10px] opacity-90 break-words whitespace-normal">📷 Image</p>
                               </div>
                             ) : (
-                              <p className="text-[10px] opacity-90 break-words break-all overflow-wrap-anywhere">
+                              <p className="text-[10px] opacity-90 break-words break-all whitespace-normal" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                                 {message.reply_to_text}
                               </p>
                             )}
@@ -534,17 +537,17 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                       >
                         {/* Show replied message if exists */}
                         {(message.reply_to_text || message.reply_to_image_url) && (
-                          <div className="px-2 py-1 bg-black/20 dark:bg-white/10 rounded border-l-2 border-yellow-400 mb-2 max-w-full" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
-                            <p className="text-[10px] opacity-75 break-words">
+                          <div className="px-2 py-1 bg-black/20 dark:bg-white/10 rounded border-l-2 border-yellow-400 mb-2 max-w-full" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere', whiteSpace: 'normal' }}>
+                            <p className="text-[10px] opacity-75 break-words whitespace-normal">
                               {message.reply_to_sender === currentUser.id ? 'You' : selectedUser?.username}
                             </p>
                             {message.reply_to_image_url ? (
                               <div className="flex items-center gap-1">
                                 <img src={message.reply_to_image_url} alt="Reply" className="w-8 h-8 rounded object-cover" />
-                                <p className="text-[10px] opacity-90 break-words">📷 Image</p>
+                                <p className="text-[10px] opacity-90 break-words whitespace-normal">📷 Image</p>
                               </div>
                             ) : (
-                              <p className="text-[10px] opacity-90 break-words break-all overflow-wrap-anywhere">
+                              <p className="text-[10px] opacity-90 break-words break-all whitespace-normal" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                                 {message.reply_to_text}
                               </p>
                             )}
@@ -618,42 +621,42 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Messenger-Style Reply Header */}
+      {replyingTo && (
+        <div className="px-3 py-2 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-3">
+            <div className="w-1 h-10 bg-gradient-to-b from-red-800 to-yellow-600 rounded-full"></div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-0.5">
+                Replying to {replyingTo.sender_id === currentUser.id ? 'yourself' : selectedUser?.username}
+              </p>
+              {replyingTo.image_url ? (
+                <div className="flex items-center gap-2">
+                  <img src={replyingTo.image_url} alt="Reply" className="w-10 h-10 rounded object-cover" />
+                  <p className="text-sm text-gray-700 dark:text-gray-300">📷 Image</p>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-700 dark:text-gray-300 truncate">
+                  {replyingTo.text}
+                </p>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={cancelReply}
+              className="flex-shrink-0 p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition"
+              aria-label="Cancel reply"
+            >
+              <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Message Input */}
       <form onSubmit={sendMessage} className="border-t border-amber-200 dark:border-red-900 bg-gradient-to-r from-amber-50 to-red-50 dark:from-gray-900 dark:to-red-950 shadow-lg overflow-visible relative z-10">
-        {/* Reply Preview - Compact but readable */}
-        {replyingTo && (
-          <div className="px-1 py-1">
-            <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-100 dark:bg-red-950 rounded-md border-l-2 border-yellow-600 max-w-[85%]">
-              <svg className="w-3 h-3 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-              </svg>
-              <div className="flex-1 min-w-0">
-                <p className="text-[11px] font-semibold text-red-900 dark:text-yellow-400 truncate leading-tight">
-                  {replyingTo.sender_id === currentUser.id ? 'You' : selectedUser?.username}
-                </p>
-                {replyingTo.image_url ? (
-                  <div className="flex items-center gap-1">
-                    <img src={replyingTo.image_url} alt="Reply" className="w-6 h-6 rounded object-cover" />
-                    <p className="text-[11px] text-red-700 dark:text-yellow-600 truncate leading-tight">📷 Image</p>
-                  </div>
-                ) : (
-                  <p className="text-[11px] text-red-700 dark:text-yellow-600 truncate leading-tight break-all overflow-wrap-anywhere">
-                    {replyingTo.text}
-                  </p>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={cancelReply}
-                className="flex-shrink-0 p-0.5 hover:bg-amber-200 dark:hover:bg-red-900 rounded-full transition"
-              >
-                <svg className="w-3 h-3 text-red-900 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        )}
         
         <div className="flex items-center gap-2 px-2 py-2">
           {/* Image upload button */}
