@@ -489,16 +489,16 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                         {/* Show replied message if exists */}
                         {(message.reply_to_text || message.reply_to_image_url) && (
                           <div className="px-2 py-1 bg-black/10 dark:bg-white/10 rounded border-l-2 border-yellow-400 mb-1 max-w-full" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
-                            <p className="text-[10px] opacity-75 truncate">
+                            <p className="text-[10px] opacity-75 break-words">
                               {message.reply_to_sender === currentUser.id ? 'You' : selectedUser?.username}
                             </p>
                             {message.reply_to_image_url ? (
                               <div className="flex items-center gap-1">
                                 <img src={message.reply_to_image_url} alt="Reply" className="w-8 h-8 rounded object-cover" />
-                                <p className="text-[10px] opacity-90 truncate">📷 Image</p>
+                                <p className="text-[10px] opacity-90 break-words">📷 Image</p>
                               </div>
                             ) : (
-                              <p className="text-[10px] opacity-90 truncate">
+                              <p className="text-[10px] opacity-90 break-words break-all overflow-wrap-anywhere">
                                 {message.reply_to_text}
                               </p>
                             )}
@@ -535,16 +535,16 @@ export default function ChatWindow({ currentUser, selectedUser, onViewProfile, o
                         {/* Show replied message if exists */}
                         {(message.reply_to_text || message.reply_to_image_url) && (
                           <div className="px-2 py-1 bg-black/20 dark:bg-white/10 rounded border-l-2 border-yellow-400 mb-2 max-w-full" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
-                            <p className="text-[10px] opacity-75 truncate">
+                            <p className="text-[10px] opacity-75 break-words">
                               {message.reply_to_sender === currentUser.id ? 'You' : selectedUser?.username}
                             </p>
                             {message.reply_to_image_url ? (
                               <div className="flex items-center gap-1">
                                 <img src={message.reply_to_image_url} alt="Reply" className="w-8 h-8 rounded object-cover" />
-                                <p className="text-[10px] opacity-90 truncate">📷 Image</p>
+                                <p className="text-[10px] opacity-90 break-words">📷 Image</p>
                               </div>
                             ) : (
-                              <p className="text-[10px] opacity-90 truncate">
+                              <p className="text-[10px] opacity-90 break-words break-all overflow-wrap-anywhere">
                                 {message.reply_to_text}
                               </p>
                             )}
