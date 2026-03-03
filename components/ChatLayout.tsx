@@ -123,8 +123,13 @@ export default function ChatLayout({ currentUser, onLogout, onRefreshUser }: Cha
           onSave={async () => {
             console.log('Profile saved, refreshing...');
             setEditingProfile(false);
-            await loadUsers();
-            await onRefreshUser();
+            
+            // Force refresh by reloading users and current user
+            await Promise.all([
+              loadUsers(),
+              onRefreshUser()
+            ]);
+            
             console.log('Refresh complete');
           }}
         />

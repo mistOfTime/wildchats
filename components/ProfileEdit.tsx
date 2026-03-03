@@ -221,12 +221,14 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
 
       console.log('Profile saved successfully');
       
+      // Wait a moment for database to propagate
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       // Call onSave to refresh parent
       onSave();
     } catch (error: any) {
       console.error('Error saving profile:', error);
       setError(error.message || 'Failed to save profile');
-    } finally {
       setSaving(false);
     }
   };
