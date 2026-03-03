@@ -96,17 +96,30 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
     setUploading(true);
 
     try {
-      // Create a unique file name
+      // Create a unique file name with timestamp to avoid conflicts
       const fileExt = file.name.split('.').pop();
-      const fileName = `${userId}-${Date.now()}.${fileExt}`;
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(7);
+      const fileName = `${userId}-avatar-${timestamp}-${random}.${fileExt}`;
       const filePath = `avatars/${fileName}`;
+
+      // Delete old avatar if exists
+      if (profile.avatar_url) {
+        const oldPath = profile.avatar_url.split('/').pop();
+        if (oldPath) {
+          await supabase.storage.from('avatars').remove([`avatars/${oldPath}`]);
+        }
+      }
+
+      // Wait a bit to avoid lock conflicts
+      await new Promise(resolve => setTimeout(resolve, 300));
 
       // Upload to Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: true
+          upsert: false
         });
 
       if (uploadError) throw uploadError;
@@ -159,16 +172,29 @@ export default function ProfileEdit({ userId, onClose, onSave }: ProfileEditProp
     setEditingCover(false);
 
     try {
-      // Create a unique file name
-      const fileName = `cover-${userId}-${Date.now()}.jpg`;
+      // Create a unique file name with timestamp to avoid conflicts
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(7);
+      const fileName = `cover-${userId}-${timestamp}-${random}.jpg`;
       const filePath = `covers/${fileName}`;
+
+      // Delete old cover if exists
+      if (profile.cover_url) {
+        const oldPath = profile.cover_url.split('/').pop();
+        if (oldPath) {
+          await supabase.storage.from('avatars').remove([`covers/${oldPath}`]);
+        }
+      }
+
+      // Wait a bit to avoid lock conflicts
+      await new Promise(resolve => setTimeout(resolve, 300));
 
       // Upload to Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, croppedBlob, {
           cacheControl: '3600',
-          upsert: true,
+          upsert: false,
           contentType: 'image/jpeg'
         });
 
