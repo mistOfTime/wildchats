@@ -105,28 +105,36 @@ export default function Home() {
       }
       
       if (data) {
-        console.log('User profile loaded:', data);
+        console.log('User profile loaded successfully:', data);
         setCurrentUser(data);
-      } else {
-        // Profile doesn't exist, create it
-        console.log('Profile not found, creating...');
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data: newProfile, error: createError } = await supabase
-            .from('users')
-            .insert([{
-              id: user.id,
-              username: user.user_metadata?.username || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
-              email: user.email,
-              online: true,
-              last_seen: new Date().toISOString(),
-            }])
-            .select()
-            .single();
-          
-          if (!createError && newProfile) {
-            setCurrentUser(newProfile);
-          }
+        return;
+      }
+      
+      // Profile doesn't exist, create it
+      console.log('Profile not found, creating new profile...');
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const newProfile = {
+          id: user.id,
+          username: user.user_metadata?.username || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+          email: user.email,
+          online: true,
+          last_seen: new Date().toISOString(),
+        };
+        
+        console.log('Creating profile:', newProfile);
+        
+        const { data: createdProfile, error: createError } = await supabase
+          .from('users')
+          .insert([newProfile])
+          .select()
+          .single();
+        
+        if (createError) {
+          console.error('Failed to create profile:', createError);
+        } else if (createdProfile) {
+          console.log('Profile created successfully:', createdProfile);
+          setCurrentUser(createdProfile);
         }
       }
     } catch (error: any) {
@@ -136,8 +144,25 @@ export default function Home() {
 
   const handleLoginSuccess = async () => {
     console.log('Login success callback triggered');
-    // Don't call checkUser - let the auth state change listener handle it
-    // This prevents the loading state from getting stuck
+    
+    // Set a timeout to force transition if it takes too long
+    const timeoutId = setTimeout(() => {
+      console.log('Login timeout - forcing user check');
+      checkUser();
+    }, 3000);
+    
+    try {
+      // Force immediate user check
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        await loadUserProfile(session.user.id);
+        clearTimeout(timeoutId);
+      }
+    } catch (error) {
+      console.error('Login success error:', error);
+      clearTimeout(timeoutId);
+      checkUser();
+    }
   };
 
   const handleLogout = async () => {
