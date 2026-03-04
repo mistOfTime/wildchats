@@ -13,7 +13,7 @@ type AuthView = 'login' | 'signup' | 'forgot-password';
 export default function Home() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [authView, setAuthView] = useState<AuthView>('login');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Changed to false for instant load
 
   useEffect(() => {
     // Load and apply saved theme on mount - default to light mode (no dark class)
@@ -71,24 +71,20 @@ export default function Home() {
       if (error) {
         console.error('Session error:', error);
         setCurrentUser(null);
-        setLoading(false);
         return;
       }
       
       if (session?.user) {
         console.log('Session found, loading profile...');
-        // Load profile in parallel with setting loading to false for faster UI
+        // Load profile without blocking UI
         loadUserProfile(session.user.id);
-        setLoading(false);
       } else {
         console.log('No session found');
         setCurrentUser(null);
-        setLoading(false);
       }
     } catch (error: any) {
       console.error('Error checking user:', error);
       setCurrentUser(null);
-      setLoading(false);
     }
   };
 
@@ -165,7 +161,7 @@ export default function Home() {
   };
 
   if (loading) {
-    // Show nothing while loading - instant transition
+    // No loading screen - instant display
     return null;
   }
 
