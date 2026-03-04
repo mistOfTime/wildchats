@@ -176,8 +176,8 @@ export default function Home() {
             />
           </div>
           <h1 className="text-3xl font-bold mb-2">
-            <span className="text-orange-500 font-extrabold">Wild</span>
-            <span className="text-yellow-500 font-extrabold italic">Chats</span>
+            <span className="text-white drop-shadow-lg font-extrabold">Wild</span>
+            <span className="text-white drop-shadow-lg font-extrabold italic">Chats</span>
           </h1>
         </div>
       </div>
