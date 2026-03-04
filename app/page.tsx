@@ -68,18 +68,23 @@ export default function Home() {
 
   const checkUser = async () => {
     try {
-      // Add 5 second timeout
-      const timeoutPromise = new Promise((resolve) => 
-        setTimeout(() => resolve(null), 5000)
-      );
+      setLoading(true);
       
-      const sessionPromise = authService.getSession();
+      // First try to get session from Supabase
+      const { data: { session }, error } = await supabase.auth.getSession();
       
-      const session = await Promise.race([sessionPromise, timeoutPromise]) as any;
+      if (error) {
+        console.error('Session error:', error);
+        setCurrentUser(null);
+        setLoading(false);
+        return;
+      }
       
       if (session?.user) {
+        console.log('Session found, loading profile...');
         await loadUserProfile(session.user.id);
       } else {
+        console.log('No session found');
         setCurrentUser(null);
       }
     } catch (error: any) {
@@ -94,21 +99,37 @@ export default function Home() {
     try {
       console.log('Loading user profile for:', userId);
       
-      // Add 5 second timeout
-      const timeoutPromise = new Promise((resolve) => 
-        setTimeout(() => resolve({ data: null, error: new Error('Timeout') }), 5000)
-      );
-      
-      const loadPromise = supabase
+      const { data, error } = await supabase
         .from('users')
         .select('*')
         .eq('id', userId)
         .single();
       
-      const { data, error } = await Promise.race([loadPromise, timeoutPromise]) as any;
-      
       if (error) {
         console.error('Error loading profile:', error);
+        // If profile doesn't exist, try to create it
+        if (error.code === 'PGRST116') {
+          console.log('Profile not found, creating...');
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { data: newProfile, error: createError } = await supabase
+              .from('users')
+              .insert([{
+                id: user.id,
+                username: user.user_metadata?.username || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                email: user.email,
+                online: true,
+                last_seen: new Date().toISOString(),
+              }])
+              .select()
+              .single();
+            
+            if (!createError && newProfile) {
+              setCurrentUser(newProfile);
+              return;
+            }
+          }
+        }
         return;
       }
       
