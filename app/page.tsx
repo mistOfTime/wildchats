@@ -47,7 +47,8 @@ export default function Home() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event);
       
-      if (event === 'SIGNED_IN' && session) {
+      if (event === 'SIGNED_IN' && session?.user) {
+        console.log('User signed in, loading profile...');
         await loadUserProfile(session.user.id);
       } else if (event === 'SIGNED_OUT') {
         setCurrentUser(null);
@@ -135,7 +136,8 @@ export default function Home() {
 
   const handleLoginSuccess = async () => {
     console.log('Login success callback triggered');
-    await checkUser();
+    // Don't call checkUser - let the auth state change listener handle it
+    // This prevents the loading state from getting stuck
   };
 
   const handleLogout = async () => {
