@@ -165,23 +165,8 @@ export default function Home() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-600">
-        <div className="text-center">
-          <div className="inline-block p-3 bg-amber-800 rounded-full mb-4 shadow-lg ring-4 ring-yellow-600 animate-pulse">
-            <img 
-              src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" 
-              alt="CIT Logo" 
-              className="w-16 h-16 rounded-full object-cover"
-            />
-          </div>
-          <h1 className="text-3xl font-bold mb-2">
-            <span className="text-white drop-shadow-lg font-extrabold">Wild</span>
-            <span className="text-white drop-shadow-lg font-extrabold italic">Chats</span>
-          </h1>
-        </div>
-      </div>
-    );
+    // Show nothing while loading - instant transition
+    return null;
   }
 
   if (!currentUser) {
