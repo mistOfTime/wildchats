@@ -91,24 +91,24 @@ export const authService = {
       throw error;
     }
 
-    console.log('Auth successful, updating online status...');
+    console.log('Auth successful');
 
-    // Update online status ONLY - don't overwrite username
+    // Update online status in background - don't wait for it
     if (data.user) {
-      const { error: updateError } = await supabase
+      supabase
         .from('users')
         .update({
           online: true,
           last_seen: new Date().toISOString(),
         })
-        .eq('id', data.user.id);
-
-      if (updateError) {
-        console.error('Profile update error:', updateError);
-        // Don't throw, user is still logged in
-      } else {
-        console.log('Online status updated successfully');
-      }
+        .eq('id', data.user.id)
+        .then(({ error: updateError }) => {
+          if (updateError) {
+            console.error('Profile update error:', updateError);
+          } else {
+            console.log('Online status updated');
+          }
+        });
     }
 
     return data;
