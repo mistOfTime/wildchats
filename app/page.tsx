@@ -40,6 +40,7 @@ export default function Home() {
 
     handleAuthCallback();
     
+    // Check user immediately without delay
     checkUser();
 
     // Listen for auth changes
@@ -50,14 +51,10 @@ export default function Home() {
         await loadUserProfile(session.user.id);
       } else if (event === 'SIGNED_OUT') {
         setCurrentUser(null);
-      } else if (event === 'TOKEN_REFRESHED') {
-        if (session?.user) {
-          await loadUserProfile(session.user.id);
-        }
-      } else if (event === 'USER_UPDATED') {
-        if (session?.user) {
-          await loadUserProfile(session.user.id);
-        }
+      } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+        await loadUserProfile(session.user.id);
+      } else if (event === 'USER_UPDATED' && session?.user) {
+        await loadUserProfile(session.user.id);
       }
     });
 
@@ -68,9 +65,7 @@ export default function Home() {
 
   const checkUser = async () => {
     try {
-      setLoading(true);
-      
-      // First try to get session from Supabase
+      // Get session synchronously from localStorage first for instant load
       const { data: { session }, error } = await supabase.auth.getSession();
       
       if (error) {
@@ -82,15 +77,17 @@ export default function Home() {
       
       if (session?.user) {
         console.log('Session found, loading profile...');
-        await loadUserProfile(session.user.id);
+        // Load profile in parallel with setting loading to false for faster UI
+        loadUserProfile(session.user.id);
+        setLoading(false);
       } else {
         console.log('No session found');
         setCurrentUser(null);
+        setLoading(false);
       }
     } catch (error: any) {
       console.error('Error checking user:', error);
       setCurrentUser(null);
-    } finally {
       setLoading(false);
     }
   };
@@ -103,39 +100,37 @@ export default function Home() {
         .from('users')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
       
-      if (error) {
+      if (error && error.code !== 'PGRST116') {
         console.error('Error loading profile:', error);
-        // If profile doesn't exist, try to create it
-        if (error.code === 'PGRST116') {
-          console.log('Profile not found, creating...');
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            const { data: newProfile, error: createError } = await supabase
-              .from('users')
-              .insert([{
-                id: user.id,
-                username: user.user_metadata?.username || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
-                email: user.email,
-                online: true,
-                last_seen: new Date().toISOString(),
-              }])
-              .select()
-              .single();
-            
-            if (!createError && newProfile) {
-              setCurrentUser(newProfile);
-              return;
-            }
-          }
-        }
         return;
       }
       
       if (data) {
         console.log('User profile loaded:', data);
         setCurrentUser(data);
+      } else {
+        // Profile doesn't exist, create it
+        console.log('Profile not found, creating...');
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: newProfile, error: createError } = await supabase
+            .from('users')
+            .insert([{
+              id: user.id,
+              username: user.user_metadata?.username || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+              email: user.email,
+              online: true,
+              last_seen: new Date().toISOString(),
+            }])
+            .select()
+            .single();
+          
+          if (!createError && newProfile) {
+            setCurrentUser(newProfile);
+          }
+        }
       }
     } catch (error: any) {
       console.error('Failed to load user profile:', error);
@@ -173,8 +168,17 @@ export default function Home() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 via-orange-500 to-yellow-600">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg font-semibold">Loading...</p>
+          <div className="inline-block p-3 bg-amber-800 rounded-full mb-4 shadow-lg ring-4 ring-yellow-600 animate-pulse">
+            <img 
+              src="https://tse3.mm.bing.net/th/id/OIP.7aJ7MqW3gaesL5SJALtnkgHaHO?rs=1&pid=ImgDetMain" 
+              alt="CIT Logo" 
+              className="w-16 h-16 rounded-full object-cover"
+            />
+          </div>
+          <h1 className="text-3xl font-bold mb-2">
+            <span className="text-orange-500 font-extrabold">Wild</span>
+            <span className="text-yellow-500 font-extrabold italic">Chats</span>
+          </h1>
         </div>
       </div>
     );
