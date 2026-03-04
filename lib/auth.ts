@@ -34,19 +34,21 @@ export const authService = {
     if (error) throw error;
 
     // Create user profile in users table after auth user is created
+    // The database trigger should handle this automatically, but we'll add a fallback
     if (data.user) {
-      // Wait a bit for auth to complete
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Wait for trigger to complete
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Check if profile already exists
+      // Verify user was created in users table, if not create manually
       const { data: existingProfile } = await supabase
         .from('users')
         .select('id')
         .eq('id', data.user.id)
         .single();
       
-      // Only create if doesn't exist
+      // Fallback: Create manually if trigger didn't work
       if (!existingProfile) {
+        console.log('Trigger did not create user, creating manually...');
         const { error: profileError } = await supabase
           .from('users')
           .insert([
@@ -55,13 +57,20 @@ export const authService = {
               username: fullName,
               email: email,
               online: true,
+              last_seen: new Date().toISOString(),
             },
-          ]);
+          ])
+          .select()
+          .single();
 
         if (profileError) {
           console.error('Profile creation error:', profileError);
-          // Don't throw here, user is created in auth
+          // Still don't throw - user exists in auth
+        } else {
+          console.log('User profile created successfully');
         }
+      } else {
+        console.log('User profile already exists from trigger');
       }
     }
 
