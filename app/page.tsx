@@ -145,23 +145,32 @@ export default function Home() {
   const handleLoginSuccess = async () => {
     console.log('Login success callback triggered');
     
-    // Set a timeout to force transition if it takes too long
-    const timeoutId = setTimeout(() => {
-      console.log('Login timeout - forcing user check');
-      checkUser();
-    }, 3000);
-    
     try {
-      // Force immediate user check
+      // Get session immediately
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        await loadUserProfile(session.user.id);
-        clearTimeout(timeoutId);
+        console.log('Session found, setting user immediately');
+        
+        // Try to load profile, but don't wait forever
+        const profilePromise = loadUserProfile(session.user.id);
+        const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 2000));
+        
+        await Promise.race([profilePromise, timeoutPromise]);
+        
+        // If profile didn't load, create a temporary user object
+        if (!currentUser) {
+          console.log('Profile load timeout, creating temporary user');
+          setCurrentUser({
+            id: session.user.id,
+            username: session.user.user_metadata?.username || session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
+            email: session.user.email || '',
+            online: true,
+            created_at: new Date().toISOString(),
+          });
+        }
       }
     } catch (error) {
       console.error('Login success error:', error);
-      clearTimeout(timeoutId);
-      checkUser();
     }
   };
 
