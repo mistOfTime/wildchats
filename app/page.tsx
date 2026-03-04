@@ -49,13 +49,14 @@ export default function Home() {
       
       if (event === 'SIGNED_IN' && session?.user) {
         console.log('User signed in, loading profile...');
-        await loadUserProfile(session.user.id);
+        // Don't await - load in background
+        loadUserProfile(session.user.id);
       } else if (event === 'SIGNED_OUT') {
         setCurrentUser(null);
       } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-        await loadUserProfile(session.user.id);
+        loadUserProfile(session.user.id);
       } else if (event === 'USER_UPDATED' && session?.user) {
-        await loadUserProfile(session.user.id);
+        loadUserProfile(session.user.id);
       }
     });
 
